@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23E9554D'/%3E%3Cpath d='M4 50a46 46 0 0 0 92 0z' fill='%23fff'/%3E%3Crect x='4' y='46' width='92' height='8' fill='%232C3A31'/%3E%3Ccircle cx='50' cy='50' r='16' fill='%23fff' stroke='%232C3A31' stroke-width='8'/%3E%3C/svg%3E">
-<meta name="theme-color" content="#EFF4EE">
+<meta name="theme-color" content="#E5EEFF">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="포켓몬 모닝">
@@ -464,6 +464,121 @@
   .toast.on{opacity:1; transform:translateX(-50%) translateY(0)}
   ::-webkit-scrollbar{width:10px;height:10px}
   ::-webkit-scrollbar-thumb{background:#D8E4DA; border-radius:10px; border:2px solid transparent; background-clip:content-box}
+  /* =========================================================
+     v2 · 하늘빛~연보라 파스텔 배경 + 유리(glassmorphism) 카드
+     ========================================================= */
+  :root{
+    --bg:#E7EFFC;
+    --ink:#3B4864;
+    --ink-soft:#5A6A88;
+    --muted:#8592AD;
+    --line:rgba(255,255,255,.72);
+    --glass:rgba(255,255,255,.55);
+    --glass-2:rgba(255,255,255,.68);
+    --glass-line:rgba(255,255,255,.9);
+    --glass-shadow:0 14px 34px rgba(118,140,196,.16), 0 2px 8px rgba(118,140,196,.07);
+    --green:#6ECD7A;
+    --green-d:#3EA050;
+    --green-l:#E6F8E5;
+  }
+  body{
+    color:var(--ink);
+    background:
+      radial-gradient(920px 640px at 6% -8%, #FFFFFF 0%, rgba(255,255,255,0) 62%),
+      radial-gradient(780px 520px at 98% 2%, #E3FAF5 0%, rgba(227,250,245,0) 58%),
+      radial-gradient(880px 700px at 14% 104%, #FFF2E4 0%, rgba(255,242,228,0) 56%),
+      radial-gradient(760px 560px at 92% 96%, #F5E9FF 0%, rgba(245,233,255,0) 58%),
+      linear-gradient(158deg,#DAEAFF 0%,#E5EEFF 32%,#ECE9FF 66%,#F7EFFF 100%);
+    background-attachment:fixed;
+  }
+  h1,h2,h3,h4{color:#35415C}
+
+  /* 상단 바 */
+  .topbar{
+    background:rgba(255,255,255,.62);
+    border-bottom:1px solid rgba(255,255,255,.75);
+    box-shadow:0 8px 26px rgba(124,144,198,.10);
+    backdrop-filter:blur(18px) saturate(1.2); -webkit-backdrop-filter:blur(18px) saturate(1.2);
+  }
+  .tab{color:#657491}
+  .tab:hover{background:rgba(255,255,255,.6)}
+  .tab.on{background:rgba(255,239,183,.92); color:#8A6410; border-color:rgba(243,219,150,.95)}
+  .tab.on.child-a{background:rgba(255,240,199,.94);color:#9A6A0B;border-color:rgba(246,222,168,.95)}
+  .tab.on.child-b{background:rgba(238,229,255,.94);color:#6C4BB0;border-color:rgba(219,205,247,.95)}
+  .tool{background:rgba(255,255,255,.62); border:1px solid rgba(255,255,255,.85); color:#5F7091}
+  .tool:hover{background:rgba(255,255,255,.86); color:#3E4E6C}
+
+  /* 유리 카드 공통 */
+  .status,.banner,.panel,.rcard,.dex-top,.dex-card,.ksum,.chk,.modal,.cheer-card,.ball-stage{
+    background:var(--glass);
+    border:1px solid var(--glass-line);
+    box-shadow:var(--glass-shadow);
+    -webkit-backdrop-filter:blur(16px) saturate(1.18);
+    backdrop-filter:blur(16px) saturate(1.18);
+  }
+  .status::after{background:radial-gradient(circle,rgba(255,255,255,.9) 0%, rgba(255,255,255,0) 70%)}
+  .panel,.status,.banner{border-radius:26px}
+  .dex-card.locked{background:rgba(255,255,255,.34); box-shadow:none}
+  .ksum{background:rgba(255,255,255,.52)}
+  .ksum:hover{background:rgba(255,255,255,.8)}
+  .chk{background:rgba(255,255,255,.5); border-color:rgba(255,255,255,.85)}
+  .chk:hover{background:rgba(255,255,255,.78); border-color:rgba(160,225,170,.8)}
+  .chk.done{background:rgba(230,248,229,.72); border-color:rgba(160,225,170,.85)}
+  .family-strip{background:rgba(255,250,224,.78); border-color:rgba(246,231,188,.9)}
+  .dot{background:rgba(255,255,255,.9)}
+  .dot.on{background:var(--green)}
+
+  /* 아이 상태 배너 */
+  .kid-ava{background:rgba(255,255,255,.72); box-shadow:inset 0 0 0 2px rgba(246,233,196,.9), 0 4px 12px rgba(150,165,210,.16)}
+  .pill{background:rgba(255,255,255,.7); color:#5B6B8A; border-color:rgba(255,255,255,.9)}
+  .count-big{color:var(--green-d)}
+  .bar{background:rgba(255,255,255,.72); box-shadow:inset 0 1px 3px rgba(90,110,160,.13)}
+  .bar-fill{background:repeating-linear-gradient(115deg,#A2E8A1 0 10px,#72D67A 10px 20px)}
+  .bar-goal{width:26px; height:26px; flex:0 0 auto; margin-left:2px; filter:drop-shadow(0 2px 3px rgba(90,110,160,.18))}
+
+  /* 아침 루틴 카드 (일러스트 중심) */
+  .rcard{background:var(--glass-2); border:2px solid rgba(255,255,255,.92); border-radius:26px; padding:0}
+  .rcard:hover{box-shadow:0 20px 40px rgba(118,140,196,.22)}
+  .rcard .art{aspect-ratio:1/1; background:linear-gradient(160deg,#EBF5FF,#F4ECFF)}
+  .rcard .art picture{position:absolute; inset:0; display:block}
+  .rcard .art img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;
+  }
+  .rcard .num{
+    width:30px; height:30px; font-size:14px; color:#5C6B8A;
+    background:rgba(255,255,255,.94); box-shadow:0 3px 10px rgba(90,110,160,.2);
+    border:1px solid rgba(255,255,255,.9);
+  }
+  .rcard .mini{background:rgba(255,255,255,.9); box-shadow:0 3px 10px rgba(90,110,160,.16)}
+  .rcard .cap{background:transparent; padding:12px 12px 15px; gap:5px}
+  .rcard .cap b{font-size:15.5px; line-height:1.35; letter-spacing:-0.02em; color:#37425C}
+  .rcard .cap span{font-size:12px; color:#8B98B2; font-weight:800}
+  .rcard.done{border-color:rgba(160,225,170,.95)}
+  .rcard .stamp{background:rgba(255,255,255,.46)}
+
+  /* 아이 탭 · 오늘의 공부 */
+  .kidstudy{display:flex; flex-wrap:wrap; gap:9px}
+  .kchip{
+    display:inline-flex; align-items:center; gap:8px; padding:10px 15px; border-radius:15px;
+    background:rgba(255,255,255,.55); border:1px solid rgba(255,255,255,.9);
+    box-shadow:0 6px 16px rgba(118,140,196,.12); font-size:13.5px; font-weight:800; color:#475572;
+    transition:transform .14s, background .16s, border-color .16s; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  }
+  .kchip:hover{background:rgba(255,255,255,.82)}
+  .kchip:active{transform:scale(.97)}
+  .kchip .bx{
+    width:19px; height:19px; border-radius:6px; border:2px solid #C8D6F0; background:#fff;
+    display:grid; place-items:center; color:#fff; font-size:11.5px; font-weight:900; flex:0 0 auto;
+  }
+  .kchip.done{background:rgba(232,249,230,.8); border-color:rgba(160,225,170,.9)}
+  .kchip.done .bx{background:var(--green); border-color:var(--green)}
+  .kchip.done .kl{color:#7A8FA0; text-decoration:line-through; text-decoration-thickness:2px; text-decoration-color:rgba(160,225,170,.9)}
+  .link-study{
+    margin-left:10px; font-size:12px; font-weight:900; background:rgba(255,255,255,.7);
+    border:1px solid rgba(255,255,255,.9); border-radius:999px; padding:6px 12px; color:#5C6FA0;
+  }
+  .link-study:hover{background:#fff}
+
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important}
   }
@@ -1175,9 +1290,24 @@ function sceneBag(cfg){
   </svg>`;
 }
 
-const ROUTINE_ART = [sceneEat, sceneBrush, sceneDress, sceneBag];
-const ROUTINE_STEPS = ["아침 먹기", "세수·양치", "옷 입기", "가방 챙기기"];
-const ROUTINE_HINTS = ["냠냠, 든든하게!", "반짝반짝 깨끗하게", "혼자서 척척", "빠뜨린 건 없나요?"];
+/* 동화책 스타일 2D 일러스트 (image-generation 으로 생성) */
+const ROUTINE_IMG = [
+  "./images/routine-1-brush.png",
+  "./images/routine-2-laundry.png",
+  "./images/routine-3-breakfast.png",
+  "./images/routine-4-bag.png"
+];
+/* 1 치카세수 · 2 옷은 빨래통 · 3 아침먹기 · 4 가방 싸기 (4번만 아이별로 다름) */
+const ROUTINE_STEPS = {
+  naye: ["치카세수", "옷은 빨래통", "아침먹기", "가방에 물통, 준비물 넣기"],
+  daye: ["치카세수", "옷은 빨래통", "아침먹기", "가방에 물통, 치카통 넣기"]
+};
+const ROUTINE_HINTS = ["반짝반짝 깨끗하게", "벗은 옷은 빨래통에 쏙", "냠냠, 든든하게!", "빠뜨린 건 없나요?"];
+function routineTitle(kid, i){ return ROUTINE_STEPS[kid][i]; }
+function routineHint(kid, i){
+  if(i !== 3) return ROUTINE_HINTS[i];
+  return kid === "daye" ? "물통이랑 치카통까지 챙겨요" : "물통이랑 준비물까지 챙겨요";
+}
 
 /* 파트너 포켓몬 아이콘 */
 function partnerIcon(kidId){
@@ -1196,9 +1326,11 @@ const KIDS = {
 };
 const KID_IDS = ["naye", "daye"];
 const STUDY_DEFAULT = {
-  naye: ["리딩게이트","DK","원서읽기","책읽기","수학 1장","필사 1문장","그림책 1권 낭독","DVD 시청"],
-  daye: ["포켓몬 쓰기 1장","패드수학","책읽기","DVD 시청"]
+  naye: ["리딩게이트","DK","원서읽기","책읽기","수학1장","필사 1문장","그림책1권 낭독","dvd 시청"],
+  daye: ["포켓몬 쓰기 1장","패드수학","책읽기","dvd 시청"]
 };
+/* 예전 저장값의 표기를 사용자가 적은 그대로 맞춰 줌 */
+const STUDY_LABEL_FIX = { "수학 1장":"수학1장", "그림책 1권 낭독":"그림책1권 낭독", "DVD 시청":"dvd 시청" };
 const SUPPLY_DEFAULT = {
   naye: "11/23(월) 오카리나 발표회 의상 — 흰 상의 + 청/검정 바지",
   daye: "11/20(금) 독서골든벨 모자 제출"
@@ -1241,6 +1373,7 @@ function load(){
       if(typeof st.supplies !== "string") st.supplies = d.settings[k].supplies;
       if(!Array.isArray(st.study)) st.study = d.settings[k].study;
       st.study = st.study.filter(x=>x && typeof x.label === "string").map(x=>({id:x.id || newItemId(), label:x.label}));
+      st.study.forEach(it=>{ if(STUDY_LABEL_FIX[it.label]) it.label = STUDY_LABEL_FIX[it.label]; });
     });
     if(typeof state.sound !== "boolean") state.sound = true;
   }catch(e){ console.warn("저장된 설정을 읽지 못했어요", e); }
@@ -1358,22 +1491,38 @@ function partnerMiniSVG(kid){
 
 function routineCardHTML(kid, i, done){
   const cfg = kidCfg(kid);
-  const art = ROUTINE_ART[i]({ hair: cfg.hair, hairColor: cfg.hairColor, shirt: cfg.shirt });
-  return `<button class="rcard${done ? " done" : ""}" data-routine="${kid}:${i}" aria-pressed="${done}" aria-label="${ROUTINE_STEPS[i]}${done ? " 완료됨" : " 완료하기"}">
+  const title = routineTitle(kid, i);
+  return `<button class="rcard${done ? " done" : ""}" data-routine="${kid}:${i}" aria-pressed="${done}" aria-label="${title} ${routineHint(kid, i)} · ${done ? "완료됨" : "눌러서 완료"}">
     <div class="art" style="background:${cfg.pastel[i]}">
-      ${art}
+      <picture class="artpic">
+        <source srcset="${ROUTINE_IMG[i].replace(/\.png$/, ".webp")}" type="image/webp">
+        <img src="${ROUTINE_IMG[i]}" alt="${esc(title)}" loading="lazy" decoding="async">
+      </picture>
       <span class="num">${i+1}</span>
       <span class="mini">${partnerMiniSVG(kid)}</span>
     </div>
-    <div class="cap"><b>${ROUTINE_STEPS[i]}</b><span>${done ? "완료했어요!" : (ROUTINE_HINTS[i] || "눌러서 완료")}</span></div>
+    <div class="cap"><b>${title}</b><span>${done ? "완료했어요!" : "눌러서 완료"}</span></div>
     <div class="stamp"><div class="bubble">✓ 완료!</div></div>
   </button>`;
+}
+
+/* 아이 탭의 ‘오늘의 공부’ 칩 목록 */
+function kidStudyChips(kid){
+  const items = state.settings[kid].study;
+  const rec = dayRecord().study[kid];
+  if(!items.length) return `<div class="modal-note">설정에서 공부 항목을 추가해 보세요.</div>`;
+  return items.map(it=>`<button class="kchip${rec[it.id] ? " done" : ""}" data-study="${kid}:${it.id}" aria-pressed="${!!rec[it.id]}">
+    <span class="bx">✓</span><span class="kl">${esc(it.label)}</span></button>`).join("");
+}
+function kidStudyCountText(kid){
+  const s = studyAll(kid);
+  return `${s.done} / ${s.total} 완료`;
 }
 
 function childViewHTML(kid){
   const cfg = kidCfg(kid);
   const done = dayRecord().routines[kid];
-  const cards = ROUTINE_STEPS.map((_, i)=>routineCardHTML(kid, i, !!done[i])).join("");
+  const cards = ROUTINE_STEPS[kid].map((_, i)=>routineCardHTML(kid, i, !!done[i])).join("");
   return `
   <div class="status">
     <div class="kid">
@@ -1397,6 +1546,12 @@ function childViewHTML(kid){
           <div class="bar-track"><div class="bar-fill" id="fill-${kid}"></div></div>
           <div class="bar-poke" id="poke-${kid}">${partnerMiniSVG(kid)}</div>
         </div>
+        <svg class="bar-goal" viewBox="0 0 60 60" aria-hidden="true">
+          <circle cx="30" cy="30" r="26" fill="#fff" stroke="#B7C5DE" stroke-width="3"/>
+          <path d="M4 30a26 26 0 0 1 52 0z" fill="#F2705F"/>
+          <rect x="4" y="27.6" width="52" height="5" fill="#B7C5DE"/>
+          <circle cx="30" cy="30" r="8" fill="#fff" stroke="#B7C5DE" stroke-width="3"/>
+        </svg>
       </div>
       <div class="stats">
         <span class="stat">루틴 <b id="rnum-${kid}">0/4</b></span>
@@ -1426,9 +1581,15 @@ function childViewHTML(kid){
 
   <div class="sec-head">
     <h3>4단계 아침 루틴 <span class="hint" style="font-weight:700">카드를 눌러 완료!</span></h3>
-    <div class="sec-prog"><span class="hint" id="rlabel-${kid}">0 / 4 완료</span><div class="dots" id="dots-${kid}">${ROUTINE_STEPS.map(()=>'<span class="dot"></span>').join("")}</div></div>
+    <div class="sec-prog"><span class="hint" id="rlabel-${kid}">0 / 4 완료</span><div class="dots" id="dots-${kid}">${ROUTINE_STEPS[kid].map(()=>'<span class="dot"></span>').join("")}</div></div>
   </div>
   <div class="routine-grid" id="routine-${kid}">${cards}</div>
+
+  <div class="sec-head">
+    <h3>📖 오늘의 공부 <span class="hint" style="font-weight:700">${cfg.name}의 오늘 공부</span></h3>
+    <div class="sec-prog"><span class="hint" id="kidstudy-count-${kid}">${kidStudyCountText(kid)}</span><button class="link-study" data-goto="study">공부 탭 열기 ›</button></div>
+  </div>
+  <div class="kidstudy" id="kidstudy-${kid}">${kidStudyChips(kid)}</div>
   `;
 }
 
@@ -1558,6 +1719,18 @@ function updateStudyStats(kid){
   const pct = s.total ? Math.round(s.done / s.total * 100) : 0;
   const p = $("#study-pct-" + kid); if(p) p.textContent = pct + "%";
   const sub = $("#study-" + kid + " .sub"); if(sub) sub.textContent = `오늘 ${s.total}개 중 ${s.done}개 완료`;
+  syncStudyUI(kid);
+}
+/* 공부 탭 목록과 아이 탭 칩의 같은 항목을 한번에 맞춤 */
+function syncStudyUI(kid){
+  const rec = dayRecord().study[kid];
+  $$(`[data-study^="${kid}:"]`).forEach(el=>{
+    const id = el.dataset.study.slice(kid.length + 1);
+    const on = !!rec[id];
+    el.classList.toggle("done", on);
+    el.setAttribute("aria-pressed", String(on));
+  });
+  const c = $("#kidstudy-count-" + kid); if(c) c.textContent = kidStudyCountText(kid);
 }
 function updateTabTimes(){
   KID_IDS.forEach(kid=>{
@@ -1668,7 +1841,7 @@ function toggleRoutine(kid, idx, btn){
   save();
   btn.classList.toggle("done", !was);
   btn.setAttribute("aria-pressed", String(!was));
-  const cap = $(".cap span", btn); if(cap) cap.textContent = !was ? "완료했어요!" : (ROUTINE_HINTS[idx] || "눌러서 완료");
+  const cap = $(".cap span", btn); if(cap) cap.textContent = !was ? "완료했어요!" : "눌러서 완료";
   updateKidStats(kid);
   renderDash();
   updateDexButtons();
@@ -1687,8 +1860,7 @@ function toggleStudy(kid, itemId, btn){
     sfx.unDone();
   }
   save();
-  btn.classList.toggle("done", !was);
-  btn.setAttribute("aria-pressed", String(!was));
+  syncStudyUI(kid);
   updateStudyStats(kid);
   updateKidStats(kid);
   renderDash();
