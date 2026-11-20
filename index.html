@@ -533,8 +533,17 @@
   .pill{background:rgba(255,255,255,.7); color:#5B6B8A; border-color:rgba(255,255,255,.9)}
   .count-big{color:var(--green-d)}
   .bar{background:rgba(255,255,255,.72); box-shadow:inset 0 1px 3px rgba(90,110,160,.13)}
+  .bar{
+    background:linear-gradient(90deg,rgba(255,255,255,.94),rgba(234,242,255,.9));
+    border:1px solid rgba(255,255,255,.95);
+    box-shadow:inset 0 1px 4px rgba(90,110,160,.11), 0 1px 0 rgba(255,255,255,.9);
+  }
   .bar-fill{background:repeating-linear-gradient(115deg,#A2E8A1 0 10px,#72D67A 10px 20px)}
-  .bar-goal{width:26px; height:26px; flex:0 0 auto; margin-left:2px; filter:drop-shadow(0 2px 3px rgba(90,110,160,.18))}
+  .bar-goal{
+    position:absolute; right:-3px; top:50%; transform:translateY(-50%);
+    width:28px; height:28px; z-index:3; margin:0;
+    filter:drop-shadow(0 2px 4px rgba(90,110,160,.22));
+  }
 
   /* 아침 루틴 카드 (일러스트 중심) */
   .rcard{background:var(--glass-2); border:2px solid rgba(255,255,255,.92); border-radius:26px; padding:0}
@@ -1545,13 +1554,13 @@ function childViewHTML(kid){
         <div class="bar">
           <div class="bar-track"><div class="bar-fill" id="fill-${kid}"></div></div>
           <div class="bar-poke" id="poke-${kid}">${partnerMiniSVG(kid)}</div>
+          <svg class="bar-goal" viewBox="0 0 60 60" aria-hidden="true">
+            <circle cx="30" cy="30" r="26" fill="#fff" stroke="#B7C5DE" stroke-width="3"/>
+            <path d="M4 30a26 26 0 0 1 52 0z" fill="#F2705F"/>
+            <rect x="4" y="27.6" width="52" height="5" fill="#B7C5DE"/>
+            <circle cx="30" cy="30" r="8" fill="#fff" stroke="#B7C5DE" stroke-width="3"/>
+          </svg>
         </div>
-        <svg class="bar-goal" viewBox="0 0 60 60" aria-hidden="true">
-          <circle cx="30" cy="30" r="26" fill="#fff" stroke="#B7C5DE" stroke-width="3"/>
-          <path d="M4 30a26 26 0 0 1 52 0z" fill="#F2705F"/>
-          <rect x="4" y="27.6" width="52" height="5" fill="#B7C5DE"/>
-          <circle cx="30" cy="30" r="8" fill="#fff" stroke="#B7C5DE" stroke-width="3"/>
-        </svg>
       </div>
       <div class="stats">
         <span class="stat">루틴 <b id="rnum-${kid}">0/4</b></span>
