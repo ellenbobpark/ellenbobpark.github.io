@@ -263,8 +263,17 @@
     0%{opacity:1; transform:translate(0,0) scale(.4) rotate(0)}
     100%{opacity:0; transform:translate(var(--dx),var(--dy)) scale(1.5) rotate(140deg)}
   }
-  @media (max-width:1000px){ .routine-grid{grid-template-columns:repeat(2,1fr)} }
-  @media (max-width:560px){ .routine-grid{grid-template-columns:1fr} }
+  @media (max-width:1000px){ .routine-grid,.routine-grid.g3{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:560px){
+    .routine-grid,.routine-grid.g3{grid-template-columns:repeat(2,1fr); gap:11px}
+    .rcard .cap{padding:9px 9px 12px}
+    .rcard .cap b{font-size:14px}
+    .rcard .cap span{font-size:11px}
+    .rcard .num{width:26px;height:26px;font-size:12.5px;left:8px;top:8px}
+    .rcard .mini{width:28px;height:28px;right:8px;top:8px}
+    .rcard .mini svg{width:23px;height:23px}
+  }
+  @media (max-width:380px){ .routine-grid,.routine-grid.g3{grid-template-columns:1fr} }
 
   /* ---------- dashboard ---------- */
   .dash-grid{display:grid; grid-template-columns:1.15fr 1fr; gap:16px}
@@ -318,7 +327,7 @@
   .dex-teaser .sp.more{background:#F4F8F4; border:1px dashed #DCE7DE; font-size:12.5px; font-weight:900; color:#8A9A90}
 
   /* ---------- study ---------- */
-  .study-grid{display:grid; grid-template-columns:1.35fr 1fr; gap:16px; align-items:start}
+  .study-grid{display:grid; gap:16px; align-items:start}
   .study-card .panel-head{display:flex; align-items:center; gap:10px; margin-bottom:14px}
   .study-card .panel-head .ava{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:#FFF6E0}
   .study-card .panel-head .ava svg{width:38px;height:38px}
@@ -589,6 +598,52 @@
   }
   .link-study:hover{background:#fff}
 
+  /* =========================================================
+     v3 · 하원 루틴 · 공부 큰 카드 (아침 루틴과 같은 결)
+     ========================================================= */
+  @media (min-width:1001px){
+    .routine-grid.g3{grid-template-columns:repeat(3,1fr); max-width:77%}
+  }
+  .rcard .art .fallback{
+    position:absolute; inset:0; display:grid; place-items:center; font-size:54px;
+    background:linear-gradient(150deg,rgba(255,255,255,.9),rgba(230,240,255,.72));
+  }
+  .rcard .balltag{
+    position:absolute; z-index:3; left:10px; bottom:10px;
+    font-size:10.5px; font-weight:900; color:#A9701A;
+    background:rgba(255,250,232,.95); border:1px solid rgba(255,255,255,.9);
+    border-radius:999px; padding:3px 8px; opacity:0; transition:opacity .2s;
+  }
+  .rcard.done .balltag{opacity:1}
+
+  /* 공부 탭 */
+  .study-card{padding:18px 18px 14px}
+  .study-card .panel-head{margin-bottom:14px}
+  .study-card .routine-grid{gap:13px}
+  .study-card .study-foot{margin-top:12px}
+
+  /* 대시보드 요약 · 아침/하원/공부 구분 */
+  .ksum .kstat{justify-content:flex-start; gap:5px; flex-wrap:wrap}
+  .ksum .kstat .kg{
+    display:inline-flex; align-items:center; gap:3px;
+    background:rgba(255,255,255,.66); border:1px solid rgba(255,255,255,.92);
+    border-radius:999px; padding:2px 8px; font-size:11px;
+  }
+  .ksum .kstat .kg b{color:var(--ink)}
+  .ksum .kstat .kg.aft{background:rgba(255,250,231,.82); border-color:rgba(246,229,180,.9)}
+  .ksum .kstat .kg.aft b{color:#8A6410}
+  .rcard .cap b{min-height:1.35em}
+  .ksum .kstat .right{margin-left:auto; font-size:11px}
+
+  @media (max-width:560px){
+    .sec-head{flex-wrap:wrap; gap:7px}
+    .sec-head h3{font-size:15.5px}
+    .sec-head .sec-prog{font-size:11.5px; gap:6px}
+    .sec-head .hint{font-size:11.5px}
+    .status .kid h2{font-size:21px}
+    .ksum .kstat .right{font-size:10.5px}
+  }
+
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important}
   }
@@ -649,7 +704,7 @@
 
       <div class="panel">
         <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px">
-          <h3 style="font-size:16px; font-weight:900">우리 아이들 오늘 아침</h3>
+          <h3 style="font-size:16px; font-weight:900">우리 아이들 오늘</h3>
           <span class="tag-mini" id="dashDate">-</span>
         </div>
         <div class="kids-sum" id="dashKids"></div>
@@ -677,7 +732,7 @@
   <section class="view" id="view-study" aria-label="공부 체크리스트">
     <div class="sec-head" style="margin-top:4px">
       <h3>📖 오늘의 공부</h3>
-      <span class="hint">항목을 누르면 완료! 몬스터볼이 하나 쌓여요</span>
+      <span class="hint">카드를 누르면 완료! 하나마다 몬스터볼 +1</span>
     </div>
     <div class="study-grid">
       <div class="panel study-card" id="study-naye"></div>
@@ -1301,12 +1356,9 @@ function sceneBag(cfg){
 }
 
 /* 동화책 스타일 2D 일러스트 (image-generation 으로 생성) */
-const ROUTINE_IMG = [
-  "./images/routine-1-brush.png",
-  "./images/routine-2-laundry.png",
-  "./images/routine-3-breakfast.png",
-  "./images/routine-4-bag.png"
-];
+/* 그림 폴더 경로는 여기 한 곳만 바뀌도록 함 · redeploy.sh가 이 줄만 고쳐 씀 */
+const IMG_DIR = "./images/";
+const ROUTINE_IMG = ["routine-1-brush", "routine-2-laundry", "routine-3-breakfast", "routine-4-bag"];
 /* 1 치카세수 · 2 옷은 빨래통 · 3 아침먹기 · 4 가방 싸기 (4번만 아이별로 다름) */
 const ROUTINE_STEPS = {
   naye: ["치카세수", "옷은 빨래통", "아침먹기", "가방에 물통, 준비물 넣기"],
@@ -1318,6 +1370,11 @@ function routineHint(kid, i){
   if(i !== 3) return ROUTINE_HINTS[i];
   return kid === "daye" ? "물통이랑 치카통까지 챙겨요" : "물통이랑 준비물까지 챙겨요";
 }
+
+/* 하원 루틴 3단계 (동화책 일러스트) */
+const AFTER_STEPS = ["손 씻기", "가방 정리", "양말은 빨래통에 쏘옥"];
+const AFTER_IMG = ["after-1-wash", "after-2-bag", "after-3-socks"];
+const AFTER_HINTS = ["비누로 반짝반짝", "내일 준비도 쏙", "벗은 양말은 빨래통에"];
 
 /* 파트너 포켓몬 아이콘 */
 function partnerIcon(kidId){
@@ -1336,11 +1393,33 @@ const KIDS = {
 };
 const KID_IDS = ["naye", "daye"];
 const STUDY_DEFAULT = {
-  naye: ["리딩게이트","DK","원서읽기","책읽기","수학1장","필사 1문장","그림책1권 낭독","dvd 시청"],
-  daye: ["포켓몬 쓰기 1장","패드수학","책읽기","dvd 시청"]
+  naye: [
+    { id:"n1", label:"리딩게이트", img:"study-1-reading-gate" },
+    { id:"n2", label:"DK", img:"study-2-dk" },
+    { id:"n3", label:"원서읽기", img:"study-3-english-book" },
+    { id:"n4", label:"책읽기", img:"study-4-book" },
+    { id:"n5", label:"수학1장", img:"study-5-math" },
+    { id:"n6", label:"필사 1문장", img:"study-6-copy" },
+    { id:"n7", label:"그림책1권 낭독", img:"study-7-readaloud" },
+    { id:"n8", label:"dvd 시청", img:"study-8-dvd" }
+  ],
+  daye: [
+    { id:"d1", label:"포켓몬 쓰기 1장", img:"study-9-monster-write" },
+    { id:"d2", label:"패드수학", img:"study-10-pad-math" },
+    { id:"d3", label:"책읽기", img:"study-4-book" },
+    { id:"d4", label:"dvd 시청", img:"study-8-dvd" }
+  ]
 };
+/* img 는 images/ 폴더의 파일 이름(확장자 제외) · 책읽기·dvd 시청은 두 아이가 같은 그림을 써요 */
 /* 예전 저장값의 표기를 사용자가 적은 그대로 맞춰 줌 */
 const STUDY_LABEL_FIX = { "수학 1장":"수학1장", "그림책 1권 낭독":"그림책1권 낭독", "DVD 시청":"dvd 시청" };
+/* 이름만 저장돼 있던 옛 항목에 그림을 되살릴 때 쓰는 표 */
+const STUDY_IMG_BY_LABEL = (()=>{
+  const map = {};
+  Object.keys(STUDY_DEFAULT).forEach(k=>STUDY_DEFAULT[k].forEach(it=>{ map[it.label] = it.img; }));
+  return map;
+})();
+const cloneStudy = list => list.map(it=>({ id: it.id, label: it.label, img: it.img }));
 const SUPPLY_DEFAULT = {
   naye: "11/23(월) 오카리나 발표회 의상 — 흰 상의 + 청/검정 바지",
   daye: "11/20(금) 독서골든벨 모자 제출"
@@ -1350,70 +1429,170 @@ const newItemId = () => "i" + Date.now().toString(36) + (uidCounter++).toString(
 
 function defaultState(){
   return {
-    v: 1,
+    v: 2,
     sound: true,
     view: "dashboard",
     balls: { naye: 0, daye: 0 },
     dex: {},
     days: {},
     settings: {
-      naye: { wake:"07:00", depart:"08:20", supplies: SUPPLY_DEFAULT.naye, study: STUDY_DEFAULT.naye.map((l,i)=>({id:"n"+(i+1), label:l})) },
-      daye: { wake:"07:30", depart:"09:00", supplies: SUPPLY_DEFAULT.daye, study: STUDY_DEFAULT.daye.map((l,i)=>({id:"d"+(i+1), label:l})) }
+      naye: { wake:"07:00", depart:"08:20", supplies: SUPPLY_DEFAULT.naye, study: cloneStudy(STUDY_DEFAULT.naye) },
+      daye: { wake:"07:30", depart:"09:00", supplies: SUPPLY_DEFAULT.daye, study: cloneStudy(STUDY_DEFAULT.daye) }
     }
   };
 }
 let state = defaultState();
 
-function load(){
-  try{
-    const raw = localStorage.getItem(STORE_KEY);
-    if(!raw) return;
-    const p = JSON.parse(raw);
-    if(!p || typeof p !== "object") return;
-    const d = defaultState();
-    state = Object.assign(d, p);
-    state.balls = Object.assign({naye:0,daye:0}, p.balls || {});
-    state.dex = p.dex || {};
-    state.days = p.days || {};
-    state.settings = p.settings || d.settings;
-    KID_IDS.forEach(k=>{
-      const st = state.settings[k] = Object.assign({}, d.settings[k], state.settings[k] || {});
-      st.wake = /^\d{2}:\d{2}$/.test(st.wake) ? st.wake : d.settings[k].wake;
-      st.depart = /^\d{2}:\d{2}$/.test(st.depart) ? st.depart : d.settings[k].depart;
-      if(typeof st.supplies !== "string") st.supplies = d.settings[k].supplies;
-      if(!Array.isArray(st.study)) st.study = d.settings[k].study;
-      st.study = st.study.filter(x=>x && typeof x.label === "string").map(x=>({id:x.id || newItemId(), label:x.label}));
-      st.study.forEach(it=>{ if(STUDY_LABEL_FIX[it.label]) it.label = STUDY_LABEL_FIX[it.label]; });
-    });
-    if(typeof state.sound !== "boolean") state.sound = true;
-  }catch(e){ console.warn("저장된 설정을 읽지 못했어요", e); }
+/* ---------- 하루 기록 모양 맞추기 (아침 4 · 하원 3 · 공부) ---------- */
+function normalizeDay(rec){
+  const r = rec && typeof rec === "object" ? rec : {};
+  if(!r.routines || typeof r.routines !== "object") r.routines = {};
+  if(!r.after || typeof r.after !== "object") r.after = {};
+  if(!r.study || typeof r.study !== "object") r.study = {};
+  KID_IDS.forEach(k=>{
+    if(!Array.isArray(r.routines[k])) r.routines[k] = [];
+    while(r.routines[k].length < 4) r.routines[k].push(false);
+    r.routines[k] = r.routines[k].slice(0, 4).map(v=>!!v);
+    if(!Array.isArray(r.after[k])) r.after[k] = [];
+    while(r.after[k].length < 3) r.after[k].push(false);
+    r.after[k] = r.after[k].slice(0, 3).map(v=>!!v);
+    if(!r.study[k] || typeof r.study[k] !== "object") r.study[k] = {};
+  });
+  return r;
 }
-function save(){
-  try{
-    // 오래된 기록 정리(45일)
-    const keys = Object.keys(state.days).sort();
-    if(keys.length > 45) keys.slice(0, keys.length-45).forEach(k=>delete state.days[k]);
-    localStorage.setItem(STORE_KEY, JSON.stringify(state));
-  }catch(e){ /* 저장 공간이 없거나 막힌 경우 조용히 넘어감 */ }
+
+/* ---------- 저장값 옮기기 (v1 → v2) ---------- */
+function migrateState(raw){
+  const d = defaultState();
+  if(!raw || typeof raw !== "object") return d;
+  const s = Object.assign({}, d, raw);
+  s.v = 2;
+  s.balls = Object.assign({ naye:0, daye:0 }, raw.balls || {});
+  s.dex = raw.dex && typeof raw.dex === "object" ? raw.dex : {};
+  s.days = raw.days && typeof raw.days === "object" ? raw.days : {};
+  s.settings = {};
+  KID_IDS.forEach(kid=>{
+    const src = (raw.settings && raw.settings[kid]) || {};
+    const base = d.settings[kid];
+    const st = Object.assign({}, base, src);
+    st.wake = /^\d{2}:\d{2}$/.test(st.wake) ? st.wake : base.wake;
+    st.depart = /^\d{2}:\d{2}$/.test(st.depart) ? st.depart : base.depart;
+    if(typeof st.supplies !== "string") st.supplies = base.supplies;
+    const list = Array.isArray(st.study) ? st.study : base.study;
+    st.study = list
+      .filter(x=>x && typeof x.label === "string")
+      .map(x=>{
+        const label = STUDY_LABEL_FIX[x.label] || String(x.label).trim();
+        return { id: x.id || newItemId(), label, img: x.img || STUDY_IMG_BY_LABEL[label] || null };
+      });
+    if(!st.study.length) st.study = cloneStudy(base.study);
+    s.settings[kid] = st;
+  });
+  if(typeof s.sound !== "boolean") s.sound = true;
+  if(typeof s.view !== "string") s.view = "dashboard";
+  Object.keys(s.days).forEach(dk=>{ s.days[dk] = normalizeDay(s.days[dk]); });
+  return s;
+}
+
+/* =========================================================
+   저장 모듈 — loadState() / saveState() 만 쓰면 됩니다.
+   폰·패드 동기화는 setSyncAdapter() 에 원격 어댑터를 넘기면
+   읽기·쓰기가 그대로 원격으로 위임됩니다.
+
+     Store.setSyncAdapter({
+       load: () => fetch(API).then(r => r.ok ? r.json() : null),  // 저장된 상태(없으면 null)
+       save: state => fetch(API, { method:"PUT", body: JSON.stringify(state) })
+     });
+     Store.onChange((state, source) => { ... }); // 저장·원격반영 알림
+     Store.apply(remoteState);                  // 원격에서 받은 상태로 화면 갱신
+   ========================================================= */
+const Store = (()=>{
+  const subs = [];
+  let adapter = localAdapter();
+  let sync = null;
+  let syncTimer = null, syncPending = null;
+
+  /* 원격은 연속 저장을 참아 주고 마지막 상태만 보냄 */
+  function queueSync(snap){
+    syncPending = snap;
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(()=>{
+      const data = syncPending; syncPending = null;
+      if(!data || !sync || typeof sync.save !== "function") return;
+      try{ Promise.resolve(sync.save(data)).catch(e=>console.warn("동기화 저장 실패", e)); }
+      catch(e){ console.warn("동기화 저장 실패", e); }
+    }, 250);
+  }
+
+  function localAdapter(){
+    return {
+      name: "localStorage",
+      get(){ try{ const raw = localStorage.getItem(STORE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } },
+      set(data){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); return true; }catch(e){ return false; } }
+    };
+  }
+  function prune(data){
+    const days = data.days || {};
+    const keys = Object.keys(days).sort();
+    if(keys.length > 45) keys.slice(0, keys.length - 45).forEach(k=>delete days[k]);
+    return data;
+  }
+  return {
+    get adapterName(){ return adapter ? adapter.name : "none"; },
+    get syncing(){ return !!sync; },
+    /* 저장소 교체(백업·테스트용). 기본은 localStorage */
+    setAdapter(a){ adapter = a || localAdapter(); return adapter; },
+    /* 원격 동기화 어댑터 연결: { load(): Promise<state|null>, save(state): Promise<any> } */
+    setSyncAdapter(a){
+      sync = a || null;
+      if(sync && typeof sync.load === "function"){
+        Promise.resolve().then(()=>sync.load()).then(remote=>{
+          if(remote) applyRemoteState(remote, "remote-load");
+        }).catch(err=>console.warn("동기화 읽기 실패", err));
+      }
+      return sync;
+    },
+    onChange(fn){ subs.push(fn); return ()=>{ const i = subs.indexOf(fn); if(i >= 0) subs.splice(i, 1); }; },
+    emit(source){ subs.forEach(fn=>{ try{ fn(state, source); }catch(e){} }); },
+    read(){ return migrateState(adapter.get()); },
+    async readAsync(){ return migrateState(await adapter.get()); },
+    write(data){
+      const snap = prune(data || state);
+      Promise.resolve(adapter.set(snap)).catch(()=>{});
+      if(sync && typeof sync.save === "function") queueSync(snap);
+      return snap;
+    },
+    /* 원격에서 받은 상태로 화면을 갈아끼움 */
+    apply(remote, source){ return applyRemoteState(remote, source); }
+  };
+})();
+
+function loadState(){
+  try{ return Store.read(); }
+  catch(e){ console.warn("저장된 기록을 읽지 못했어요", e); return defaultState(); }
+}
+function saveState(next){ return Store.write(next || state); }
+
+/* 원격 상태 반영 (동기화 어댑터가 부를 수 있는 공개 함수) */
+function applyRemoteState(remote, source){
+  state = migrateState(remote);
+  renderAll();
+  Store.emit(source || "remote");
+  return state;
 }
 
 function dayRecord(dk){
   dk = dk || dateKey();
-  if(!state.days[dk]) state.days[dk] = { routines:{ naye:[false,false,false,false], daye:[false,false,false,false] }, study:{ naye:{}, daye:{} } };
-  const r = state.days[dk];
-  if(!r.routines) r.routines = { naye:[false,false,false,false], daye:[false,false,false,false] };
-  KID_IDS.forEach(k=>{
-    if(!Array.isArray(r.routines[k])) r.routines[k] = [false,false,false,false];
-    while(r.routines[k].length < 4) r.routines[k].push(false);
-    if(!r.study[k]) r.study[k] = {};
-  });
-  return r;
+  state.days[dk] = normalizeDay(state.days[dk]);
+  return state.days[dk];
 }
 function kidCfg(kid){
   const k = KIDS[kid], s = state.settings[kid] || {};
   return Object.assign({}, k, { wake: s.wake || k.defaultWake, depart: s.depart || k.defaultDepart, supplies: s.supplies || "" });
 }
 function routineDoneCount(kid, dk){ return dayRecord(dk).routines[kid].filter(Boolean).length; }
+function afterDoneCount(kid, dk){ return dayRecord(dk).after[kid].filter(Boolean).length; }
+function afterAll(kid, dk){ return { total: AFTER_STEPS.length, done: afterDoneCount(kid, dk) }; }
 function studyDoneCount(kid, dk){
   const items = state.settings[kid].study, done = dayRecord(dk).study[kid];
   return items.filter(it=>done[it.id]).length;
@@ -1421,6 +1600,15 @@ function studyDoneCount(kid, dk){
 function studyAll(kid, dk){
   const items = state.settings[kid].study, done = dayRecord(dk).study[kid];
   return { total: items.length, done: items.filter(it=>done[it.id]).length };
+}
+/* 아침 · 하원 · 공부를 합친 진행률 */
+function progressOf(kid, dk){
+  const morning = { total: ROUTINE_STEPS[kid].length, done: routineDoneCount(kid, dk) };
+  const after = afterAll(kid, dk);
+  const study = studyAll(kid, dk);
+  const done = morning.done + after.done + study.done;
+  const total = morning.total + after.total + study.total;
+  return { morning, after, study, done, total, pct: total ? Math.round(done / total * 100) : 0 };
 }
 
 /* =========================================================
@@ -1500,29 +1688,56 @@ function partnerMiniSVG(kid){
 }
 
 function routineCardHTML(kid, i, done){
-  const cfg = kidCfg(kid);
-  const title = routineTitle(kid, i);
-  return `<button class="rcard${done ? " done" : ""}" data-routine="${kid}:${i}" aria-pressed="${done}" aria-label="${title} ${routineHint(kid, i)} · ${done ? "완료됨" : "눌러서 완료"}">
-    <div class="art" style="background:${cfg.pastel[i]}">
-      <picture class="artpic">
-        <source srcset="${ROUTINE_IMG[i].replace(/\.png$/, ".webp")}" type="image/webp">
-        <img src="${ROUTINE_IMG[i]}" alt="${esc(title)}" loading="lazy" decoding="async">
-      </picture>
-      <span class="num">${i+1}</span>
-      <span class="mini">${partnerMiniSVG(kid)}</span>
+  return bigCardHTML({
+    attr: "data-routine", key: kid + ":" + i, kid, done,
+    title: routineTitle(kid, i), hint: routineHint(kid, i),
+    img: ROUTINE_IMG[i],
+    bg: kidCfg(kid).pastel[i], badge: String(i + 1)
+  });
+}
+function afterCardHTML(kid, i, done){
+  return bigCardHTML({
+    attr: "data-after", key: kid + ":" + i, kid, done,
+    title: AFTER_STEPS[i], hint: AFTER_HINTS[i],
+    img: AFTER_IMG[i], bg: "#E7F2FF"
+  });
+}
+function studyCardHTML(kid, item, done){
+  return bigCardHTML({
+    attr: "data-study", key: kid + ":" + item.id, kid, done,
+    title: item.label, hint: "오늘의 공부",
+    img: item.img, bg: "#F0EEFF"
+  });
+}
+/* 큰 일러스트 카드 한 장 (아침·하원·공부가 같은 모양을 씁니다) */
+function bigCardHTML(o){
+  const title = esc(o.title), hint = esc(o.hint || "");
+  return `<button class="rcard${o.done ? " done" : ""}" ${o.attr}="${esc(o.key)}" aria-pressed="${!!o.done}" aria-label="${title} ${hint} · ${o.done ? "완료됨" : "눌러서 완료"}">
+    <div class="art" style="background:${o.bg || "#EEF3FF"}">
+      ${imgPicture(o.img, o.title)}
+      ${o.badge ? `<span class="num" aria-hidden="true">${o.badge}</span>` : ""}
+      <span class="mini">${partnerMiniSVG(o.kid)}</span>
+      <span class="balltag">⚪ +1</span>
     </div>
-    <div class="cap"><b>${title}</b><span>${done ? "완료했어요!" : "눌러서 완료"}</span></div>
+    <div class="cap"><b>${title}</b><span>${o.done ? "완료했어요!" : "눌러서 완료"}</span></div>
     <div class="stamp"><div class="bubble">✓ 완료!</div></div>
   </button>`;
 }
+/* webp + png 폴백 · 그림이 없는 항목은 이모지 타일 */
+function imgPicture(name, alt){
+  if(!name) return `<div class="fallback" aria-hidden="true">📖</div>`;
+  return `<picture class="artpic">
+        <source srcset="${IMG_DIR}${name}.webp" type="image/webp">
+        <img src="${IMG_DIR}${name}.png" alt="${esc(alt)}" width="900" height="900" loading="eager" decoding="async">
+      </picture>`;
+}
 
-/* 아이 탭의 ‘오늘의 공부’ 칩 목록 */
-function kidStudyChips(kid){
+/* 아이 탭·공부 탭의 ‘오늘의 공부’ 큰 카드 */
+function studyCardsHTML(kid){
   const items = state.settings[kid].study;
   const rec = dayRecord().study[kid];
   if(!items.length) return `<div class="modal-note">설정에서 공부 항목을 추가해 보세요.</div>`;
-  return items.map(it=>`<button class="kchip${rec[it.id] ? " done" : ""}" data-study="${kid}:${it.id}" aria-pressed="${!!rec[it.id]}">
-    <span class="bx">✓</span><span class="kl">${esc(it.label)}</span></button>`).join("");
+  return items.map(it=>studyCardHTML(kid, it, !!rec[it.id])).join("");
 }
 function kidStudyCountText(kid){
   const s = studyAll(kid);
@@ -1531,8 +1746,10 @@ function kidStudyCountText(kid){
 
 function childViewHTML(kid){
   const cfg = kidCfg(kid);
-  const done = dayRecord().routines[kid];
+  const rec = dayRecord();
+  const done = rec.routines[kid];
   const cards = ROUTINE_STEPS[kid].map((_, i)=>routineCardHTML(kid, i, !!done[i])).join("");
+  const afterCards = AFTER_STEPS.map((_, i)=>afterCardHTML(kid, i, !!rec.after[kid][i])).join("");
   return `
   <div class="status">
     <div class="kid">
@@ -1564,7 +1781,9 @@ function childViewHTML(kid){
         </div>
       </div>
       <div class="stats">
-        <span class="stat">루틴 <b id="rnum-${kid}">0/4</b></span>
+        <span class="stat">아침 <b id="rnum-${kid}">0/4</b></span>
+        <span class="stat">하원 <b id="anum-${kid}">0/3</b></span>
+        <span class="stat">공부 <b id="snum-${kid}">0/0</b></span>
         <span class="stat">달성 <b id="rpct-${kid}">0%</b></span>
         <span class="stat balls">몬스터볼 <b id="balls-${kid}">0</b>개</span>
       </div>
@@ -1596,36 +1815,33 @@ function childViewHTML(kid){
   <div class="routine-grid" id="routine-${kid}">${cards}</div>
 
   <div class="sec-head">
+    <h3>🏠 하원 루틴 <span class="hint" style="font-weight:700">집에 오면 스스로 척척</span></h3>
+    <div class="sec-prog"><span class="hint" id="alabel-${kid}">0 / 3 완료</span><div class="dots" id="adots-${kid}">${AFTER_STEPS.map(()=>'<span class="dot"></span>').join("")}</div></div>
+  </div>
+  <div class="routine-grid g3" id="after-${kid}">${afterCards}</div>
+
+  <div class="sec-head">
     <h3>📖 오늘의 공부 <span class="hint" style="font-weight:700">${cfg.name}의 오늘 공부</span></h3>
     <div class="sec-prog"><span class="hint" id="kidstudy-count-${kid}">${kidStudyCountText(kid)}</span><button class="link-study" data-goto="study">공부 탭 열기 ›</button></div>
   </div>
-  <div class="kidstudy" id="kidstudy-${kid}">${kidStudyChips(kid)}</div>
+  <div class="routine-grid" id="kidstudy-${kid}">${studyCardsHTML(kid)}</div>
   `;
 }
 
 function studyPanelHTML(kid){
   const cfg = kidCfg(kid);
-  const items = state.settings[kid].study;
-  const rec = dayRecord().study[kid];
-  const doneN = items.filter(it=>rec[it.id]).length;
-  const pct = items.length ? Math.round(doneN / items.length * 100) : 0;
+  const s = studyAll(kid);
+  const pct = s.total ? Math.round(s.done / s.total * 100) : 0;
   return `
     <div class="panel-head">
       <div class="ava">${partnerMiniSVG(kid)}</div>
       <div>
         <h3>${cfg.name}의 공부</h3>
-        <div class="sub">오늘 ${items.length}개 중 ${doneN}개 완료</div>
+        <div class="sub">오늘 ${s.total}개 중 ${s.done}개 완료</div>
       </div>
       <div class="count"><b id="study-pct-${kid}">${pct}%</b><span>달성</span></div>
     </div>
-    <div class="chk-list" id="studylist-${kid}">
-      ${items.length ? items.map(it=>`
-        <button class="chk${rec[it.id] ? " done" : ""}" data-study="${kid}:${it.id}" aria-pressed="${!!rec[it.id]}">
-          <span class="box">✓</span>
-          <span class="lbl">${esc(it.label)}</span>
-          <span class="balltag">⚪ +1</span>
-        </button>`).join("") : `<div class="modal-note">설정에서 공부 항목을 추가해 보세요.</div>`}
-    </div>
+    <div class="routine-grid" id="studylist-${kid}">${studyCardsHTML(kid)}</div>
     <div class="study-foot"><span>⚪</span> 완료할 때마다 몬스터볼 +1</div>`;
 }
 
@@ -1677,15 +1893,18 @@ function renderDash(){
   $("#dashAffirmText").textContent = "“" + affirmationFor("family") + "”";
   const wrap = $("#dashKids");
   wrap.innerHTML = KID_IDS.map(kid=>{
-    const cfg = kidCfg(kid);
-    const rd = routineDoneCount(kid), st = studyAll(kid);
-    const pct = Math.round(((rd / 4) * 0.55 + (st.total ? st.done / st.total : 0) * 0.45) * 100);
+    const cfg = kidCfg(kid), p = progressOf(kid);
     return `<button class="ksum" data-goto="${kid}">
       <div class="ava">${partnerMiniSVG(kid)}</div>
       <div class="kbody">
         <div class="kname">${cfg.name} <span style="font-size:11.5px;color:#94A399;font-weight:800">${cfg.grade}</span><span class="go">›</span></div>
-        <div class="kbar"><i style="width:${pct}%"></i></div>
-        <div class="kstat"><span>루틴 <b>${rd}/4</b> · 공부 <b>${st.done}/${st.total}</b></span><span><b>${pct}%</b> · ⚪ ${state.balls[kid] || 0}</span></div>
+        <div class="kbar"><i style="width:${p.pct}%"></i></div>
+        <div class="kstat">
+          <span class="kg">아침 <b>${p.morning.done}/${p.morning.total}</b></span>
+          <span class="kg aft">하원 <b>${p.after.done}/${p.after.total}</b></span>
+          <span class="kg">공부 <b>${p.study.done}/${p.study.total}</b></span>
+          <span class="right"><b>${p.pct}%</b> · ⚪ ${state.balls[kid] || 0}</span>
+        </div>
       </div>
     </button>`;
   }).join("");
@@ -1711,27 +1930,35 @@ function renderDash(){
     : `⚪ 몬스터볼을 모아 포켓몬 도감을 채워 보세요!`;
 }
 
+function setText(sel, v){ const el = $(sel); if(el) el.textContent = v; }
+
 function updateKidStats(kid){
-  const rd = routineDoneCount(kid);
-  const pct = Math.round(rd / 4 * 100);
+  const p = progressOf(kid);
+  const rec = dayRecord();
   const fill = $("#fill-" + kid), poke = $("#poke-" + kid);
-  if(fill) fill.style.width = pct + "%";
-  if(poke) poke.style.left = clamp(pct, 2, 97) + "%";
-  const rn = $("#rnum-" + kid); if(rn) rn.textContent = rd + "/4";
-  const rp = $("#rpct-" + kid); if(rp) rp.textContent = pct + "%";
-  const b = $("#balls-" + kid); if(b) b.textContent = state.balls[kid] || 0;
-  const lbl = $("#rlabel-" + kid); if(lbl) lbl.textContent = rd + " / 4 완료";
+  if(fill) fill.style.width = p.pct + "%";
+  if(poke) poke.style.left = clamp(p.pct, 2, 97) + "%";
+  setText("#rnum-" + kid, p.morning.done + "/" + p.morning.total);
+  setText("#anum-" + kid, p.after.done + "/" + p.after.total);
+  setText("#snum-" + kid, p.study.done + "/" + p.study.total);
+  setText("#rpct-" + kid, p.pct + "%");
+  setText("#rlabel-" + kid, `아침 ${p.morning.done} / ${p.morning.total} 완료`);
+  setText("#alabel-" + kid, `하원 ${p.after.done} / ${p.after.total} 완료`);
+  setText("#balls-" + kid, state.balls[kid] || 0);
   const dots = $("#dots-" + kid);
-  if(dots) $$(".dot", dots).forEach((d,i)=>d.classList.toggle("on", !!dayRecord().routines[kid][i]));
+  if(dots) $$(".dot", dots).forEach((d,i)=>d.classList.toggle("on", !!rec.routines[kid][i]));
+  const adots = $("#adots-" + kid);
+  if(adots) $$(".dot", adots).forEach((d,i)=>d.classList.toggle("on", !!rec.after[kid][i]));
 }
 function updateStudyStats(kid){
   const s = studyAll(kid);
   const pct = s.total ? Math.round(s.done / s.total * 100) : 0;
-  const p = $("#study-pct-" + kid); if(p) p.textContent = pct + "%";
-  const sub = $("#study-" + kid + " .sub"); if(sub) sub.textContent = `오늘 ${s.total}개 중 ${s.done}개 완료`;
+  setText("#study-pct-" + kid, pct + "%");
+  const sub = $("#study-" + kid + " .sub");
+  if(sub) sub.textContent = `오늘 ${s.total}개 중 ${s.done}개 완료`;
   syncStudyUI(kid);
 }
-/* 공부 탭 목록과 아이 탭 칩의 같은 항목을 한번에 맞춤 */
+/* 공부 탭 카드와 아이 탭 카드의 같은 항목을 한번에 맞킴 */
 function syncStudyUI(kid){
   const rec = dayRecord().study[kid];
   $$(`[data-study^="${kid}:"]`).forEach(el=>{
@@ -1739,8 +1966,20 @@ function syncStudyUI(kid){
     const on = !!rec[id];
     el.classList.toggle("done", on);
     el.setAttribute("aria-pressed", String(on));
+    const cap = $(".cap span", el); if(cap) cap.textContent = on ? "완료했어요!" : "눌러서 완료";
   });
-  const c = $("#kidstudy-count-" + kid); if(c) c.textContent = kidStudyCountText(kid);
+  setText("#kidstudy-count-" + kid, kidStudyCountText(kid));
+}
+/* 하원 루틴 카드 상태 맞추기 */
+function syncAfterUI(kid){
+  const rec = dayRecord().after[kid];
+  $$(`[data-after^="${kid}:"]`).forEach(el=>{
+    const i = Number(el.dataset.after.split(":")[1]);
+    const on = !!rec[i];
+    el.classList.toggle("done", on);
+    el.setAttribute("aria-pressed", String(on));
+    const cap = $(".cap span", el); if(cap) cap.textContent = on ? "완료했어요!" : "눌러서 완료";
+  });
 }
 function updateTabTimes(){
   KID_IDS.forEach(kid=>{
@@ -1843,18 +2082,39 @@ function toggleRoutine(kid, idx, btn){
     sfx.done();
     sparkleAt(btn);
     const r = routineDoneCount(kid);
-    if(r === 4) setTimeout(()=>{ sfx.cheer(); toast(`${kidCfg(kid).name}, 4단계 루틴 모두 완료! 정말 멋져요 🎉`); }, 380);
+    if(r === 4) setTimeout(()=>{ sfx.cheer(); toast(`${kidCfg(kid).name}, 4단계 아침 루틴 모두 완료! 정말 멋져요 🎉`); }, 380);
   }else{
     state.balls[kid] = Math.max(0, (state.balls[kid] || 0) - 1);
     sfx.unDone();
   }
-  save();
+  saveState();
   btn.classList.toggle("done", !was);
   btn.setAttribute("aria-pressed", String(!was));
   const cap = $(".cap span", btn); if(cap) cap.textContent = !was ? "완료했어요!" : "눌러서 완료";
   updateKidStats(kid);
   renderDash();
   updateDexButtons();
+}
+
+function toggleAfter(kid, idx, btn){
+  const rec = dayRecord();
+  const was = !!rec.after[kid][idx];
+  rec.after[kid][idx] = !was;
+  if(!was){
+    state.balls[kid] = (state.balls[kid] || 0) + 1;
+    sfx.done();
+    sparkleAt(btn);
+  }else{
+    state.balls[kid] = Math.max(0, (state.balls[kid] || 0) - 1);
+    sfx.unDone();
+  }
+  saveState();
+  syncAfterUI(kid);
+  updateKidStats(kid);
+  renderDash();
+  updateDexButtons();
+  const a = afterAll(kid);
+  if(!was && a.done === a.total) setTimeout(()=>{ sfx.cheer(); toast(`${kidCfg(kid).name}, 하원 루틴 완료! 스스로 척척 멋저요 🏠`); }, 360);
 }
 
 function toggleStudy(kid, itemId, btn){
@@ -1869,7 +2129,7 @@ function toggleStudy(kid, itemId, btn){
     state.balls[kid] = Math.max(0, (state.balls[kid] || 0) - 1);
     sfx.unDone();
   }
-  save();
+  saveState();
   syncStudyUI(kid);
   updateStudyStats(kid);
   updateKidStats(kid);
@@ -1894,7 +2154,7 @@ function go(view){
   if(view === "study"){ KID_IDS.forEach(k=>updateStudyStats(k)); }
   if(view === "naye" || view === "daye") updateKidStats(view);
   tick();
-  save();
+  saveState();
 }
 $$(".tab").forEach(t=>t.addEventListener("click", ()=>{ sfx.click(); go(t.dataset.view); }));
 
@@ -1904,6 +2164,12 @@ document.addEventListener("click", e=>{
   if(routine){
     const [kid, idx] = routine.dataset.routine.split(":");
     toggleRoutine(kid, Number(idx), routine);
+    return;
+  }
+  const after = e.target.closest("[data-after]");
+  if(after){
+    const [kid, idx] = after.dataset.after.split(":");
+    toggleAfter(kid, Number(idx), after);
     return;
   }
   const study = e.target.closest("[data-study]");
@@ -1993,7 +2259,7 @@ function openBall(kid){
     $("#ballStage").innerHTML = `
       <div style="font-size:46px; line-height:1">⚪</div>
       <h3>${name}의 몬스터볼이 없어요</h3>
-      <p class="ddesc">아침 루틴이나 공부를 하나 완료하면<br>몬스터볼을 1개 받아요!</p>
+      <p class="ddesc">아침·하원 루틴이나 공부를 하나 완료하면<br>몬스터볼을 1개 받아요!</p>
       <div class="acts"><button class="btn ghost" data-close="ballOverlay">알겠어요</button></div>`;
     openOverlay("ballOverlay");
     return;
@@ -2045,7 +2311,7 @@ function revealBall(kid){
   const pick = remaining[Math.floor(Math.random() * remaining.length)];
   state.balls[kid] = Math.max(0, (state.balls[kid] || 0) - 1);
   state.dex[pick.id] = { by: kid, at: new Date().toISOString() };
-  save();
+  saveState();
   renderDex();
   renderDash();
   updateKidStats(kid);
@@ -2095,7 +2361,7 @@ $("#btnPreview").addEventListener("click", ()=>{
 /* ---------- 효과음 ---------- */
 $("#btnSound").addEventListener("click", ()=>{
   state.sound = !state.sound;
-  save();
+  saveState();
   $("#btnSound").classList.toggle("on", state.sound);
   $("#soundIco").textContent = state.sound ? "🔊" : "🔇";
   if(state.sound){ sfx.click(); toast("효과음을 켰어요"); } else toast("효과음을 껐어요");
@@ -2219,11 +2485,14 @@ $("#btnSaveSettings").addEventListener("click", ()=>{
       wake: /^\d{2}:\d{2}$/.test(s.wake) ? s.wake : state.settings[kid].wake,
       depart: /^\d{2}:\d{2}$/.test(s.depart) ? s.depart : state.settings[kid].depart,
       supplies: String(s.supplies || "").trim(),
-      study: s.study.filter(x=>x.label.trim()).map(x=>({ id: x.id || newIdSafe(), label: x.label.trim() }))
+      study: s.study.filter(x=>x.label.trim()).map(x=>{
+        const label = x.label.trim();
+        return { id: x.id || newIdSafe(), label, img: x.img || STUDY_IMG_BY_LABEL[label] || null };
+      })
     };
     state.settings[kid] = clean;
   });
-  save();
+  saveState();
   closeOverlay("settingsOverlay");
   renderChildViews();
   renderStudy();
@@ -2235,8 +2504,8 @@ $("#btnSaveSettings").addEventListener("click", ()=>{
 $("#btnResetToday").addEventListener("click", ()=>{
   if(!window.confirm("오늘의 루틴·공부 체크를 모두 지울까요?\n(몬스터볼과 도감 기록은 그대로 남아요.)")) return;
   const dk = dateKey();
-  state.days[dk] = { routines:{ naye:[false,false,false,false], daye:[false,false,false,false] }, study:{ naye:{}, daye:{} } };
-  save();
+  state.days[dk] = normalizeDay(null);
+  saveState();
   closeOverlay("settingsOverlay");
   renderChildViews();
   renderStudy();
@@ -2358,11 +2627,22 @@ async function loadWeather(force){
 }
 $("#btnWeatherRefresh").addEventListener("click", ()=>{ sfx.click(); weather = { data:null, at:0 }; loadWeather(true); });
 
+function renderAll(){
+  renderChildViews();
+  renderStudy();
+  renderDex();
+  renderDash();
+  updateTabTimes();
+  KID_IDS.forEach(k=>{ updateKidStats(k); updateStudyStats(k); });
+  updateDexButtons();
+  tick();
+}
+
 /* =========================================================
    시작
    ========================================================= */
 function boot(){
-  load();
+  state = loadState();
   $("#btnSound").classList.toggle("on", state.sound);
   $("#soundIco").textContent = state.sound ? "🔊" : "🔇";
   renderChildViews();
