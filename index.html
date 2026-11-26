@@ -599,7 +599,7 @@
   .link-study:hover{background:#fff}
 
   /* =========================================================
-     v3 · 하원 루틴 · 공부 큰 카드 (아침 루틴과 같은 결)
+     v3 · 하교·하원 루틴 · 공부 큰 카드 (아침 루틴과 같은 결)
      ========================================================= */
   @media (min-width:1001px){
     .routine-grid.g3{grid-template-columns:repeat(3,1fr); max-width:77%}
@@ -622,7 +622,7 @@
   .study-card .routine-grid{gap:13px}
   .study-card .study-foot{margin-top:12px}
 
-  /* 대시보드 요약 · 아침/하원/공부 구분 */
+  /* 대시보드 요약 · 아침/하교·하원/공부 구분 */
   .ksum .kstat{justify-content:flex-start; gap:5px; flex-wrap:wrap}
   .ksum .kstat .kg{
     display:inline-flex; align-items:center; gap:3px;
@@ -748,7 +748,7 @@
         <p>루틴과 공부를 끝내 모은 몬스터볼로 포켓몬을 만나 보세요!</p>
       </div>
       <div class="dex-prog">
-        <span class="ring" id="dexProgress">0 / 24</span>
+        <span class="ring" id="dexProgress">0 / 100</span>
       </div>
       <div class="open-row">
         <button class="btn-ball" id="open-naye"><span>⚪</span>나예 몬스터볼 열기 <span class="cnt" data-ballcount="naye">0</span></button>
@@ -841,8 +841,7 @@ function mon(o){
   return svgOpen(bg) + `
     ${o.back || ""}
     <ellipse cx="50" cy="93" rx="25" ry="4.6" fill="#22352A" opacity=".08"/>
-    <ellipse cx="34" cy="86" rx="10" ry="6.4" fill="${dark}"/>
-    <ellipse cx="66" cy="86" rx="10" ry="6.4" fill="${dark}"/>
+    ${o.noFeet ? "" : `<ellipse cx="34" cy="86" rx="10" ry="6.4" fill="${dark}"/><ellipse cx="66" cy="86" rx="10" ry="6.4" fill="${dark}"/>`}
     <ellipse cx="50" cy="74" rx="23" ry="17.5" fill="${o.belly || body}"/>
     ${o.bellyPatch || ""}
     ${o.ears || ""}
@@ -1072,6 +1071,167 @@ const DEX = [
       face:`${FACE_EYES(46, 4.4)}${SMILE(56, 4)}
             <circle cx="28" cy="52" r="5" fill="#F08AA6" opacity=".35"/><circle cx="72" cy="52" r="5" fill="#F08AA6" opacity=".35"/>` }) }
 ];
+/* =========================================================
+   100종 도감 · 새 포켓몬 피규어
+   기존 24종과 같은 그림체(둥근 몸 + 눈·볼)로 색과 특징만 바꿔
+   그립니다. 그림 파일을 받아오지 않으므로 인터넷이 없어도
+   깨지지 않고, 도감 카드 어디서나 같은 크기로 보여요.
+   ========================================================= */
+function shade(hex, amt){
+  const n = parseInt(String(hex).replace("#", ""), 16);
+  const f = v => clamp(Math.round(v * (1 + amt)), 0, 255);
+  return "#" + [f(n >> 16 & 255), f(n >> 8 & 255), f(n & 255)].map(v => pad2(v.toString(16))).join("");
+}
+const EARS2 = {
+  point:(c,d)=>earPair(`<path d="M42 27 C38 11 31 1 23 -2 C18 -4 14 0 17 6 C22 14 28 24 34 33 Z" fill="${c}"/><path d="M28 2 C24 -1 19 1 21 6 L26 12 C27 9 29 5 28 2 Z" fill="${d}"/>`),
+  round:(c,d)=>earPair(`<circle cx="31" cy="24" r="12" fill="${c}"/><circle cx="31" cy="24" r="6" fill="${d}" opacity=".5"/>`),
+  long:(c,d)=>earPair(`<ellipse cx="35" cy="16" rx="7.5" ry="21" fill="${c}" transform="rotate(-14 35 16)"/><ellipse cx="35" cy="16" rx="3.6" ry="15" fill="${d}" opacity=".45" transform="rotate(-14 35 16)"/>`),
+  fin:(c,d)=>earPair(`<path d="M40 30 q-16 -16 -25 -11 q2 16 17 22 z" fill="${c}"/><path d="M38 30 q-11 -10 -17 -8 q4 10 12 13 z" fill="${d}" opacity=".4"/>`),
+  horn:(c,d)=>earPair(`<path d="M41 26 L33 3 q-2 -5 3 -2 L48 15 Z" fill="${c}"/>`),
+  crest:(c,d)=>earPair(`<path d="M40 24 q-7 -15 -17 -20 q1 13 9 22 z" fill="${c}"/>`),
+  none:()=> ""
+};
+const TAIL2 = {
+  flame:(c,d)=>`<path d="M70 78 q18 2 16 -12" stroke="${d}" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M86 66 q9 -11 2 -20 q-2 8 -8 10 q-6 3 -3 10 z" fill="#FFB03A"/><path d="M85 64 q4 -6 1 -12 q-1 5 -4 6 z" fill="#FFE07A"/>`,
+  bolt:(c,d)=>`<path d="M72 62 l14 -6 l-3 12 l13 2 l-6 11 l12 7" fill="none" stroke="${d}" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>`,
+  bushy:(c,d)=>`<path d="M70 76 q20 -2 18 -16 q10 6 6 16 q-4 10 -24 8 z" fill="${shade(c, .18)}"/>`,
+  fish:(c,d)=>`<path d="M74 62 q22 -12 24 6 q-12 -2 -12 8 q-8 6 -14 -4 z" fill="${shade(c, .1)}"/>`,
+  spike:(c,d)=>`<path d="M72 78 l10 -8 l2 10 l10 -4 l-2 10 z" fill="${d}"/>`,
+  long:(c,d)=>`<path d="M72 78 q22 4 17 -12 q-3 -8 -10 -4" stroke="${c}" stroke-width="6" fill="none" stroke-linecap="round"/>`,
+  leaf:(c,d)=>`<path d="M72 76 q18 -6 16 8 q-10 6 -18 -2 z" fill="#7ED388"/>`,
+  none:()=> ""
+};
+const CREST2 = {
+  leaf:(c,d)=>`<path d="M50 20 q-9 -19 1 -23 q5 8 2 12 q9 -8 13 -4 q-4 11 -13 15 z" fill="#7ED388"/>`,
+  flower:(c,d)=>`<g><circle cx="43" cy="16" r="6.4" fill="#F58FB0"/><circle cx="57" cy="16" r="6.4" fill="#F58FB0"/><circle cx="50" cy="9" r="6.4" fill="#F58FB0"/><circle cx="50" cy="22" r="6.4" fill="#F58FB0"/><circle cx="50" cy="16" r="4" fill="#FFE07A"/></g>`,
+  gem:(c,d)=>`<path d="M50 6 l7 9 l-7 9 l-7 -9 z" fill="#F58F8F"/><path d="M50 9 l4 6 l-4 6 l-4 -6 z" fill="#FFC1C1"/>`,
+  horn:(c,d)=>`<path d="M50 19 L45 -2 L55 -2 Z" fill="${d}"/>`,
+  flame:(c,d)=>`<path d="M50 19 q-8 -13 0 -20 q7 9 4 14 q4 -2 5 -6 q4 9 -9 12 z" fill="#FFB03A"/><path d="M50 16 q-3 -6 1 -10 q3 5 1 10 z" fill="#FFE07A"/>`,
+  spike:(c,d)=>`<path d="M38 21 l6 -13 l6 13 l6 -13 l6 13 z" fill="${d}"/>`,
+  none:()=> ""
+};
+const WINGS2 = (c,d)=>earPair(`<path d="M32 50 L4 33 q-3 17 8 27 q10 8 20 -3 z" fill="${shade(c,.5)}" stroke="${d}" stroke-width="1.8" opacity=".96"/><path d="M27 52 L11 41" stroke="${d}" stroke-width="1.4" opacity=".35"/>`);
+const FACE2 = {
+  cute:()=> FACE,
+  big:()=> `${FACE_EYES(46, 5.6)}${BLUSH_AT(54)}${SMILE(55, 4)}`,
+  sleepy:()=> `<path d="M35 46 q6 5 12 0 M53 46 q6 5 12 0" stroke="#3B2A22" stroke-width="2.4" fill="none" stroke-linecap="round"/>${BLUSH_AT(53)}${SMILE(54, 3.6)}`,
+  fang:()=> `${FACE_EYES(46, 4.7)}${BLUSH_AT(53)}<path d="M42 54 q8 7 16 0" stroke="#3B2A22" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M45 56 l1.6 4 M55 56 l-1.6 4" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>`,
+  beak:()=> `${FACE_EYES(44, 4.6)}<path d="M50 50 l-7 5 l7 6 l7 -6 z" fill="#F2B23A"/><path d="M43 55 l14 0" stroke="#D9982A" stroke-width="1.2"/>`,
+  grin:()=> `${FACE_EYES(46, 4.7)}<path d="M39 54 q11 10 22 0" stroke="#3B2A22" stroke-width="2" fill="none" stroke-linecap="round"/>`
+};
+function fig(o){
+  o = o || {};
+  const body = o.c || "#BFD9C6";
+  const dark = o.d || shade(body, -0.17);
+  const bg = o.bg || "#F4F8FB";
+  const back = [];
+  if(o.star) back.push(`<path d="M50 6 L61 36 L93 36 L67 55 L77 88 L50 69 L23 88 L33 55 L7 36 L39 36 Z" fill="${body}" stroke="${dark}" stroke-width="2"/>`);
+  if(o.shell) back.push(`<ellipse cx="50" cy="66" rx="31" ry="25" fill="#B4763F" opacity=".52"/><path d="M28 82 q22 9 44 0" stroke="#A66A38" stroke-width="2" fill="none" opacity=".55"/>`);
+  if(o.wings) back.push(WINGS2(body, dark));
+  back.push((TAIL2[o.tail] || TAIL2.none)(body, dark));
+  const head = [];
+  if(o.cap) head.push(`<path d="M24 25 q4 -19 26 -19 q22 0 26 19 q-26 9 -52 0 z" fill="#E9554D"/><circle cx="38" cy="15" r="4.2" fill="#FFF"/><circle cx="57" cy="11" r="3.4" fill="#FFF"/><circle cx="65" cy="19" r="3" fill="#FFF"/>`);
+  head.push((CREST2[o.crest] || CREST2.none)(body, dark));
+  const front = [];
+  if(o.arms) front.push(`<path d="M28 63 q-9 8 -3 15" stroke="${dark}" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M72 63 q9 8 3 15" stroke="${dark}" stroke-width="7" fill="none" stroke-linecap="round"/>`);
+  if(o.claws) front.push(`<path d="M22 64 q-11 7 -2 14 q10 5 13 -5 z" fill="${dark}"/><path d="M78 64 q11 7 2 14 q-10 5 -13 -5 z" fill="${dark}"/>`);
+  if(o.spiral) front.push(`<path d="M50 66 q7 1 7 6 q0 7 -9 7 q-11 0 -11 -10 q0 -13 15 -13" stroke="${dark}" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".75"/>`);
+  if(o.spots) front.push(`<circle cx="36" cy="72" r="4.2" fill="${dark}" opacity=".32"/><circle cx="62" cy="68" r="3.4" fill="${dark}" opacity=".28"/><circle cx="56" cy="80" r="3" fill="${dark}" opacity=".24"/>`);
+  if(o.stripes) front.push(`<path d="M38 68 q6 4 0 9 M50 65 q6 4 0 9 M62 68 q6 4 0 9" stroke="${dark}" stroke-width="3.2" fill="none" stroke-linecap="round" opacity=".45"/>`);
+  return mon({ body, dark, bg,
+    back: back.join(""),
+    bellyPatch: o.patch ? `<ellipse cx="50" cy="76" rx="14" ry="12" fill="${o.patch}"/>` : "",
+    ears: (EARS2[o.ear] || EARS2.none)(body, dark),
+    head: head.join(""),
+    face: (FACE2[o.face] || FACE2.cute)(),
+    front: front.join(""),
+    noFeet: !!o.noFeet });
+}
+
+/* ---------- 추가 76종 (24 + 76 = 100) ---------- */
+const DEX_MORE = [
+  ["ivysaur","이상해풀","002","풀","등의 꽃봉오리가 점점 커져요. 햇빛을 많이 받으면 꽃이 필 준비를 해요.",{c:"#7FC79A",bg:"#E7F7EC",ear:"point",tail:"leaf",crest:"flower",patch:"#CFEBC0"}],
+  ["venusaur","이상해꽃","003","풀","등에 큰 꽃이 활짝 피었어요. 꽃에서 달콤한 향기가 나요.",{c:"#6FB98C",bg:"#E3F6E8",ear:"point",tail:"leaf",crest:"flower",patch:"#CFEBC0",spots:true}],
+  ["charmeleon","리자드","005","불꽃","꼬리 불꽃으로 기분을 표현해요. 화가 나면 불꽃이 활활 타올라요.",{c:"#F2705F",bg:"#FFECE6",ear:"horn",tail:"flame",crest:"horn",patch:"#FFD9A0"}],
+  ["charizard","리자몽","006","불꽃","하늘을 나는 용 포켓몬. 뜨거운 불꽃을 뿜어요.",{c:"#F58A4C",bg:"#FFE9DC",ear:"horn",tail:"flame",crest:"horn",patch:"#FFDFA0",face:"fang",wings:true}],
+  ["wartortle","어니부기","008","물","꼬리가 복슬복슬해졌어요. 물을 뿜는 힘이 세졌답니다.",{c:"#7FB8E8",bg:"#E8F5FF",ear:"fin",tail:"fish",patch:"#F7E7C8",spots:true}],
+  ["blastoise","거북왕","009","물","등의 물대포로 멀리까지 물을 쏴요. 듬직한 거북 포켓몬!",{c:"#6FA8D8",bg:"#E4F2FF",ear:"fin",tail:"fish",shell:true,patch:"#F7E7C8",face:"fang"}],
+  ["caterpie","캐터피","010","벌레","머리의 더듬이로 냄새를 맡아요. 잎을 아주 좋아해요.",{c:"#A8D96B",bg:"#F2FAE2",crest:"spike",face:"big",stripes:true}],
+  ["beedrill","독침붕","015","벌레","양손의 독침이 아주 날카로워요. 부지런히 꽃을 찾아다녀요.",{c:"#E8D24B",bg:"#FFF9DD",wings:true,crest:"horn",tail:"spike",face:"fang"}],
+  ["pidgeot","피죤투","018","비행","큰 날개로 하늘을 가볍게 날아요. 아주 빠르답니다.",{c:"#D9C08A",bg:"#FFF8E8",ear:"crest",tail:"bushy",wings:true,crest:"spike",face:"beak",patch:"#F5E6C8"}],
+  ["arbok","아보크","024","독","목의 무늬로 상대를 겁줘요. 몸을 크게 부풀릴 수 있어요.",{c:"#A87BC0",bg:"#F5EAFB",tail:"long",face:"fang",stripes:true}],
+  ["nidoqueen","니드퀸","031","독","튼튼한 몸으로 가족을 지켜요. 새끼를 따뜻하게 감싸 줘요.",{c:"#7FA8D0",bg:"#EAF2FB",ear:"horn",tail:"long",patch:"#F5E3C8",face:"fang"}],
+  ["nidoking","니드킹","034","독","뿔과 꼬리로 힘껏 공격해요. 가족을 지키는 씩씩한 리더!",{c:"#A88BC8",bg:"#F3EBFB",ear:"horn",tail:"long",crest:"horn",patch:"#F5E3C8",face:"fang"}],
+  ["clefable","픽시","036","노말","달빛을 받으면 기분이 좋아져요. 귀가 아주 좋아 작은 소리도 들어요.",{c:"#F9C6D6",bg:"#FFF2F7",ear:"round",tail:"long",face:"big"}],
+  ["ninetales","나인테일","038","불꽃","아홉 개의 꼬리가 황금빛으로 빛나요. 아주 오래 산다고 해요.",{c:"#F0D08A",bg:"#FFF8E4",ear:"point",tail:"bushy"}],
+  ["wigglytuff","푸크린","040","노말","몸이 둥글둥글하고 털이 아주 부드러워요.",{c:"#F9C6D6",bg:"#FFF1F6",ear:"round",face:"big"}],
+  ["golbat","골뱃","042","독","날개를 크게 펼쳐 어둠 속을 날아요. 날카로운 이빨로 물어요!",{c:"#8B8BD0",bg:"#EFEFFB",wings:true,face:"fang",noFeet:true}],
+  ["vileplume","라플레시아","045","풀","머리의 커다란 꽃에서 독가루를 뿌려요.",{c:"#9C8BD0",bg:"#F2EDFB",ear:"point",crest:"flower",tail:"leaf",face:"sleepy"}],
+  ["venomoth","도나리","049","벌레","날개의 가루를 흩뿌려 상대를 어지럽혀요. 밤에 잘 날아다녀요.",{c:"#B09BD0",bg:"#F4EFFC",wings:true,crest:"spike",face:"big"}],
+  ["persian","페르시온","053","노말","이마의 보석이 반짝반짝. 조용하고 우아하게 걸어요.",{c:"#F5E3B8",bg:"#FFF9EA",ear:"point",tail:"long",crest:"gem",face:"fang"}],
+  ["golduck","골덕","055","물","이마의 보석이 빛나면 힘이 세져요. 물속을 아주 빠르게 헤엄쳐요.",{c:"#6FA8D8",bg:"#E7F2FF",crest:"gem",patch:"#DDEFFB"}],
+  ["primeape","성원숭","057","격투","화가 나면 몸이 더 단단해져요. 끝까지 포기하지 않아요.",{c:"#F0DCC0",bg:"#FFF6EC",ear:"round",face:"grin",arms:true,patch:"#FFFFFF"}],
+  ["arcanine","윈디","059","불꽃","아주 빠르게 달리는 전설의 강아지 포켓몬. 위엄이 넘쳐요.",{c:"#F5A860",bg:"#FFF0E0",ear:"point",tail:"bushy",stripes:true,face:"fang",patch:"#F8E3C8"}],
+  ["poliwhirl","슈륙챙이","061","물","배의 소용돌이 무늬가 특징이에요. 물속에서도 숨을 쉴 수 있어요.",{c:"#8FC8E8",bg:"#EAF6FF",face:"big",patch:"#FFFFFF",spiral:true}],
+  ["poliwrath","강챙이","062","물","근육이 단단한 수영 선수! 물을 뿜어 공격해요.",{c:"#6FA8D8",bg:"#E6F2FF",face:"fang",spiral:true,arms:true}],
+  ["abra","캐이시","063","에스퍼","하루 대부분을 잠으로 보내요. 위험하면 순식간에 사라져요.",{c:"#E8C97C",bg:"#FFF8E2",ear:"point",face:"sleepy",patch:"#F5E3B8"}],
+  ["alakazam","후딘","065","에스퍼","아주 똑똑하고 초능력이 강해요. 숟가락을 마음대로 구부려요.",{c:"#E8C97C",bg:"#FFF7DE",ear:"point",crest:"spike",face:"cute",patch:"#F5E3B8"}],
+  ["machop","알통몬","066","격투","매일 운동해서 근육을 키워요. 작지만 힘이 아주 세요.",{c:"#A8B8C8",bg:"#F1F5FA",ear:"crest",face:"grin",arms:true,patch:"#E8EEF5"}],
+  ["machamp","괴력몬","068","격투","네 개의 팔로 강력한 주먹을 날려요. 거대한 바위도 들어요.",{c:"#9FB0C4",bg:"#EFF3F9",ear:"crest",face:"grin",arms:true,patch:"#E8EEF5"}],
+  ["victreebel","우츠보트","071","풀","큰 입으로 먹이를 꿀꺽 삼켜요. 달콤한 냄새로 유혹해요.",{c:"#C9D94B",bg:"#F6FAE2",crest:"leaf",tail:"leaf",face:"fang"}],
+  ["tentacruel","독파리","073","물","여러 개의 촉수로 상대를 꼬옥 감아요. 바다 어디든 헤엄쳐요.",{c:"#6FA8D8",bg:"#E7F2FF",crest:"gem",face:"big",noFeet:true}],
+  ["golem","딱구리","076","바위","몸을 둥글게 말아 굴러가요. 바위처럼 단단해요!",{c:"#B0A090",bg:"#F4F0EA",shell:true,face:"fang",patch:"#D9C8A8"}],
+  ["rapidash","날쌩마","078","불꽃","갈기를 휘날리며 시속 150km로 달려요. 불꽃처럼 빨라요.",{c:"#F5C978",bg:"#FFF7E4",ear:"point",tail:"flame",crest:"flame",patch:"#FFFFFF"}],
+  ["slowbro","야도란","080","물","꼬리에 물린 셀러가 함께 살아요. 둘 다 느긋해서 잘 맞아요.",{c:"#F5B6C8",bg:"#FFF0F5",ear:"round",tail:"fish",shell:true,face:"sleepy",patch:"#FFE3EC"}],
+  ["magneton","레어코일","082","전기","세 개의 코일이 붙어 있어 강한 자기장을 만들어요.",{c:"#9AAAB8",bg:"#F0F3F7",crest:"spike",spots:true,noFeet:true}],
+  ["farfetchd","파오리","083","노말","언제나 파를 들고 다녀요. 그 파는 아주 소중한 무기래요.",{c:"#D9B87C",bg:"#FFF6E4",wings:true,face:"beak",crest:"leaf"}],
+  ["dodrio","두트리오","085","노말","머리가 세 개라서 동시에 세 가지를 생각해요.",{c:"#D9C08A",bg:"#FFF8E8",ear:"crest",tail:"bushy",wings:true,face:"beak",crest:"spike"}],
+  ["dewgong","쥬레곤","087","물","추운 바다에서도 척척 헤엄쳐요. 하얀 몸이 눈처럼 빛나요.",{c:"#E8F2FA",bg:"#F2FAFF",tail:"fish",crest:"horn",patch:"#FFFFFF"}],
+  ["muk","질뻐기","089","독","질퍽질퍽한 몸이지만 정이 많아요. 발자국을 남기며 다녀요.",{c:"#A08BD0",bg:"#F2EDFB",face:"grin",noFeet:true,spots:true}],
+  ["cloyster","파르셀","091","물","껍질이 아주 단단해서 아무리 쳐도 깨지지 않아요.",{c:"#8B8BD0",bg:"#EFF0FB",shell:true,face:"fang",crest:"spike",noFeet:true}],
+  ["haunter","고우스트","093","고스트","어둠 속에서 조용히 다가와요. 손이 따로 떨어져 떠다녀요.",{c:"#A88BC8",bg:"#F4EFFC",face:"fang",noFeet:true,crest:"spike"}],
+  ["hypno","슬리퍼","097","에스퍼","흔드는 시계로 상대를 잠들게 해요. 꿈을 먹는다고 해요.",{c:"#F0D08A",bg:"#FFF7E2",ear:"point",face:"sleepy",patch:"#FFF3D0",tail:"long"}],
+  ["kingler","킹크랩","099","물","큰 집게로 단단한 껍질도 부숴요. 옆으로 걸어요.",{c:"#E8795C",bg:"#FFEDE6",face:"grin",claws:true}],
+  ["electrode","붐볼","101","전기","아주 조금만 놀라도 크게 폭발해요. 그래도 마음은 약해요.",{c:"#F2705F",bg:"#FFEFEC",face:"big",patch:"#FFFFFF"}],
+  ["exeggutor","나시","103","풀","머리에 여러 개의 열매가 달려 있어요. 열매마다 생각이 달라요.",{c:"#C9D96B",bg:"#F7FAE4",crest:"leaf",spots:true,noFeet:true}],
+  ["marowak","텅구리","105","땅","머리에 쓴 뼈 투구가 아주 듬직해요. 뼈를 무기로 써요.",{c:"#C9B08C",bg:"#FAF3E6",crest:"horn",face:"fang",patch:"#E8DCC0"}],
+  ["hitmonlee","시라소몬","106","격투","다리가 아주 길어요. 뛰어오르며 발차기를 날려요.",{c:"#C9A88C",bg:"#FBF1E8",arms:true,patch:"#E8D8C8"}],
+  ["hitmonchan","홍수몬","107","격투","권투 글러브 같은 주먹으로 빠르게 펀치를 날려요.",{c:"#C9A88C",bg:"#FBF1E8",arms:true,patch:"#D9A8B8"}],
+  ["lickitung","내루미","108","노말","긴 혀를 자유자재로 움직여요. 혀로 이것저것 핥아 봐요.",{c:"#F0A8C8",bg:"#FFF0F6",tail:"long",face:"big",patch:"#FFE3EE"}],
+  ["weezing","또도가스","110","독","두 개의 몸이 붙어 다녀요. 부글부글한 가스를 내뿜어요.",{c:"#A89BC0",bg:"#F4F0FA",face:"cute",noFeet:true,spots:true}],
+  ["rhydon","코뿌리","112","땅","뿔로 바위를 부숴요. 몸이 아주 단단하고 힘이 세요.",{c:"#B0A8B8",bg:"#F4F2F8",ear:"horn",crest:"horn",face:"fang",patch:"#E0D8C8",stripes:true}],
+  ["chansey","럭키","113","노말","상처를 낫게 하는 알을 나눠 줘요. 다정한 마음씨!",{c:"#F9C6D6",bg:"#FFF2F7",ear:"round",tail:"long",face:"big",patch:"#FFFFFF"}],
+  ["tangela","덩쿠리","114","풀","온몸이 덩굴로 덮여 있어요. 덩굴이 계속 자라요.",{c:"#6FB98C",bg:"#EAF8EE",face:"cute",noFeet:true,spots:true}],
+  ["kangaskhan","캥카","115","노말","배 주머니에 아기를 넣고 다녀요. 아주 듬직한 엄마!",{c:"#C9A87C",bg:"#FBF2E4",ear:"round",patch:"#E8D8C0"}],
+  ["seadra","시드라","117","물","등의 가시에 독이 있어요. 지느러미로 물살을 가르며 헤엄쳐요.",{c:"#8FC8E8",bg:"#EAF7FF",ear:"fin",tail:"fish",crest:"spike",face:"fang"}],
+  ["seaking","왕콘치","119","물","뿔로 돌도 부숴요. 알을 지킬 때는 힘이 더 세진대요.",{c:"#F0A860",bg:"#FFF3E4",ear:"fin",tail:"fish",crest:"horn",patch:"#FFE3C0"}],
+  ["starmie","아쿠스타","121","물","가운데 보석이 무지개색으로 빛나요. 별 모양 그대로예요.",{c:"#D9A8C8",bg:"#FBF0F7",star:true,crest:"gem",face:"big",noFeet:true}],
+  ["mrmime","마임맨","122","에스퍼","몸짓으로 눈에 보이지 않는 벽을 만들어요.",{c:"#F5C6D6",bg:"#FFF2F8",ear:"point",crest:"spike",face:"big",patch:"#FFFFFF"}],
+  ["scyther","스라크","123","벌레","낫처럼 생긴 팔로 풀을 베어요. 아주 빠르게 움직여요.",{c:"#8BC96B",bg:"#F0FAE8",wings:true,claws:true,crest:"horn",face:"fang"}],
+  ["jynx","루주라","124","얼음","춤추는 몸짓이 아주 우아해요. 얼음 공격을 써요.",{c:"#B08BD0",bg:"#F6F0FC",face:"big",patch:"#F5C6D6"}],
+  ["electabuzz","에레브","125","전기","몸에서 전기가 찌릿찌릿. 전기를 모으는 걸 좋아해요.",{c:"#F5D24B",bg:"#FFF9E0",ear:"point",tail:"bolt",crest:"spike",face:"fang",stripes:true}],
+  ["magmar","마그마","126","불꽃","몸이 뜨거워서 주변 공기가 일렁여요.",{c:"#F0705C",bg:"#FFEDE8",crest:"flame",tail:"flame",spots:true}],
+  ["pinsir","쁘사이저","127","벌레","뿔로 상대를 집어 던져요. 힘이 아주 세요.",{c:"#B08B6B",bg:"#FAF1E8",ear:"horn",crest:"horn",face:"fang",claws:true,patch:"#E8D8C0"}],
+  ["tauros","켄타로스","128","노말","세 개의 꼬리로 채찍처럼 때려요. 아주 힘이 세요.",{c:"#C9A87C",bg:"#FBF2E4",ear:"horn",tail:"bushy",crest:"horn",face:"fang"}],
+  ["gyarados","갸라도스","130","물","잉어킹이 진화한 모습. 몹시 화나면 마을을 부순다고 해요.",{c:"#6F9BD8",bg:"#E8F0FF",ear:"fin",tail:"fish",crest:"spike",face:"fang",patch:"#F5E3C0"}],
+  ["vaporeon","샤미드","134","물","물속에 녹아들 수 있어요. 비 오는 날이 좋아요.",{c:"#8FC8E8",bg:"#EAF7FF",ear:"fin",tail:"fish",crest:"gem",patch:"#F5FBFF"}],
+  ["jolteon","쥬피썬더","135","전기","털이 뾰족뾰족. 화가 나면 전기가 찌릿찌릿 튀어요.",{c:"#F5D24B",bg:"#FFF9E0",ear:"point",tail:"bolt",crest:"spike",face:"fang"}],
+  ["flareon","부스터","136","불꽃","복슬복슬한 털 속에 뜨거운 공기를 품고 있어요.",{c:"#F58A5C",bg:"#FFEFE6",ear:"point",tail:"bushy",crest:"flame",patch:"#FFE3C0"}],
+  ["porygon","폴리곤","137","노말","프로그램으로 만들어진 포켓몬. 컴퓨터 속을 자유롭게 다녀요.",{c:"#E8A8C8",bg:"#FBF0F7",crest:"gem",spots:true,noFeet:true}],
+  ["omastar","암스타","139","바위","나선 껍질이 아주 단단해요. 입으로 물을 뿜어요.",{c:"#8FB0C8",bg:"#EEF5FA",shell:true,crest:"spike",face:"fang"}],
+  ["kabutops","투구푸스","141","바위","낫 같은 팔로 먹이를 베어요. 아주 오래전에 살았대요.",{c:"#C9A87C",bg:"#FAF2E6",claws:true,crest:"spike",face:"fang",patch:"#E8D8C0"}],
+  ["aerodactyl","프테라","142","바위","하늘을 나는 공룡 포켓몬. 날카로운 이빨로 물어요.",{c:"#B0A8C0",bg:"#F4F1FA",ear:"horn",wings:true,crest:"horn",tail:"spike",face:"fang"}],
+  ["articuno","프리져","144","얼음","하늘을 날며 눈보라를 일으켜요. 파란 날개가 아름다워요.",{c:"#BFE3F5",bg:"#F0FAFF",ear:"crest",wings:true,tail:"bushy",face:"beak",crest:"spike"}],
+  ["zapdos","썬더","145","전기","날개를 치면 천둥이 쳐요. 전설의 새 포켓몬!",{c:"#F5D24B",bg:"#FFF8DC",ear:"crest",wings:true,tail:"bolt",face:"beak",crest:"spike"}],
+  ["moltres","파이어","146","불꽃","날개가 불꽃처럼 타올라요. 전설의 불꽃 새!",{c:"#F5A85C",bg:"#FFF1E4",ear:"crest",wings:true,tail:"flame",face:"beak",crest:"flame"}],
+  ["dragonair","신뇽","148","드래곤","몸을 감싼 보석이 반짝여요. 날씨를 바꾸는 힘이 있어요.",{c:"#8FC8E8",bg:"#EAF6FF",ear:"fin",tail:"fish",crest:"gem",patch:"#F5FBFF"}],
+  ["dragonite","망나뇽","149","드래곤","아주 상냥한 드래곤. 바다를 건너 사람을 도와줘요.",{c:"#F5C978",bg:"#FFF7E4",ear:"crest",wings:true,tail:"long",patch:"#FFF3D8"}]
+];
+DEX_MORE.forEach(([id, name, no, type, desc, art])=>{
+  DEX.push({ id, name, no, type, desc, draw:()=>fig(art) });
+});
+/* 도감 번호 순으로 보여 주기 (기존 획득 기록은 id로 남아 있어 그대로 유지) */
+DEX.sort((a, b)=>Number(a.no) - Number(b.no));
 const DEX_BY_ID = Object.fromEntries(DEX.map(p => [p.id, p]));
 
 /* ---------- 몬스터볼 SVG ---------- */
@@ -1371,7 +1531,7 @@ function routineHint(kid, i){
   return kid === "daye" ? "물통이랑 치카통까지 챙겨요" : "물통이랑 준비물까지 챙겨요";
 }
 
-/* 하원 루틴 3단계 (동화책 일러스트) */
+/* 하교·하원 루틴 3단계 (동화책 일러스트) */
 const AFTER_STEPS = ["손 씻기", "가방 정리", "양말은 빨래통에 쏘옥"];
 const AFTER_IMG = ["after-1-wash", "after-2-bag", "after-3-socks"];
 const AFTER_HINTS = ["비누로 반짝반짝", "내일 준비도 쏙", "벗은 양말은 빨래통에"];
@@ -1388,8 +1548,8 @@ function partnerId(kidId){ return kidId === "daye" ? "eevee" : "pikachu"; }
 const STORE_KEY = "pokemonMorning.v1";
 
 const KIDS = {
-  naye: { id:"naye", name:"나예", grade:"초1 · 8세", hair:"long", hairColor:"#5B3B2E", shirt:"#F7CB55", pastel:["#FFF5D6","#DDF1FB","#FFE3E6","#E6F7D8"], defaultWake:"07:00", defaultDepart:"08:20" },
-  daye: { id:"daye", name:"다예", grade:"유치원 · 6세", hair:"bob", hairColor:"#6B4230", shirt:"#F3B6C8", pastel:["#FFF5D6","#DDF1FB","#FFE3E6","#E6F7D8"], defaultWake:"07:30", defaultDepart:"09:00" }
+  naye: { id:"naye", name:"나예", grade:"초1 · 8세", hair:"long", hairColor:"#5B3B2E", shirt:"#F7CB55", pastel:["#FFF5D6","#DDF1FB","#FFE3E6","#E6F7D8"], defaultWake:"07:00", defaultDepart:"08:40" },
+  daye: { id:"daye", name:"다예", grade:"유치원 · 6세", hair:"bob", hairColor:"#6B4230", shirt:"#F3B6C8", pastel:["#FFF5D6","#DDF1FB","#FFE3E6","#E6F7D8"], defaultWake:"07:30", defaultDepart:"08:40" }
 };
 const KID_IDS = ["naye", "daye"];
 const STUDY_DEFAULT = {
@@ -1429,21 +1589,21 @@ const newItemId = () => "i" + Date.now().toString(36) + (uidCounter++).toString(
 
 function defaultState(){
   return {
-    v: 2,
+    v: 3,
     sound: true,
     view: "dashboard",
     balls: { naye: 0, daye: 0 },
     dex: {},
     days: {},
     settings: {
-      naye: { wake:"07:00", depart:"08:20", supplies: SUPPLY_DEFAULT.naye, study: cloneStudy(STUDY_DEFAULT.naye) },
-      daye: { wake:"07:30", depart:"09:00", supplies: SUPPLY_DEFAULT.daye, study: cloneStudy(STUDY_DEFAULT.daye) }
+      naye: { wake:"07:00", depart:"08:40", supplies: SUPPLY_DEFAULT.naye, study: cloneStudy(STUDY_DEFAULT.naye) },
+      daye: { wake:"07:30", depart:"08:40", supplies: SUPPLY_DEFAULT.daye, study: cloneStudy(STUDY_DEFAULT.daye) }
     }
   };
 }
 let state = defaultState();
 
-/* ---------- 하루 기록 모양 맞추기 (아침 4 · 하원 3 · 공부) ---------- */
+/* ---------- 하루 기록 모양 맞추기 (아침 4 · 하교/하원 3 · 공부) ---------- */
 function normalizeDay(rec){
   const r = rec && typeof rec === "object" ? rec : {};
   if(!r.routines || typeof r.routines !== "object") r.routines = {};
@@ -1461,12 +1621,15 @@ function normalizeDay(rec){
   return r;
 }
 
-/* ---------- 저장값 옮기기 (v1 → v2) ---------- */
+/* ---------- 저장값 옮기기 (v1 → v2 → v3) ---------- */
+/* v2까지의 기본 출발 시간 — 이 값을 그대로 쓰던 기기만 새 기본값(08:40)으로 옮깁니다 */
+const LEGACY_DEPART = { naye:"08:20", daye:"09:00" };
 function migrateState(raw){
   const d = defaultState();
   if(!raw || typeof raw !== "object") return d;
+  const fromV = Number(raw.v) || 1;
   const s = Object.assign({}, d, raw);
-  s.v = 2;
+  s.v = 3;
   s.balls = Object.assign({ naye:0, daye:0 }, raw.balls || {});
   s.dex = raw.dex && typeof raw.dex === "object" ? raw.dex : {};
   s.days = raw.days && typeof raw.days === "object" ? raw.days : {};
@@ -1477,6 +1640,9 @@ function migrateState(raw){
     const st = Object.assign({}, base, src);
     st.wake = /^\d{2}:\d{2}$/.test(st.wake) ? st.wake : base.wake;
     st.depart = /^\d{2}:\d{2}$/.test(st.depart) ? st.depart : base.depart;
+    /* v3: 예전 기본값(나예 08:20 · 다예 09:00)이 남아 있으면 08:40으로.
+       직접 고친 시간은 그대로 두고, 날짜별 완료 체크(days)는 손대지 않습니다. */
+    if(fromV < 3 && st.depart === LEGACY_DEPART[kid]) st.depart = base.depart;
     if(typeof st.supplies !== "string") st.supplies = base.supplies;
     const list = Array.isArray(st.study) ? st.study : base.study;
     st.study = list
@@ -1590,6 +1756,8 @@ function kidCfg(kid){
   const k = KIDS[kid], s = state.settings[kid] || {};
   return Object.assign({}, k, { wake: s.wake || k.defaultWake, depart: s.depart || k.defaultDepart, supplies: s.supplies || "" });
 }
+/* 나예(초1)는 하교 루틴 · 다예(유치원)는 하원 루틴 */
+function afterWord(kid){ return kid === "naye" ? "하교" : "하원"; }
 function routineDoneCount(kid, dk){ return dayRecord(dk).routines[kid].filter(Boolean).length; }
 function afterDoneCount(kid, dk){ return dayRecord(dk).after[kid].filter(Boolean).length; }
 function afterAll(kid, dk){ return { total: AFTER_STEPS.length, done: afterDoneCount(kid, dk) }; }
@@ -1601,7 +1769,7 @@ function studyAll(kid, dk){
   const items = state.settings[kid].study, done = dayRecord(dk).study[kid];
   return { total: items.length, done: items.filter(it=>done[it.id]).length };
 }
-/* 아침 · 하원 · 공부를 합친 진행률 */
+/* 아침 · 하교/하원 · 공부를 합친 진행률 */
 function progressOf(kid, dk){
   const morning = { total: ROUTINE_STEPS[kid].length, done: routineDoneCount(kid, dk) };
   const after = afterAll(kid, dk);
@@ -1709,7 +1877,7 @@ function studyCardHTML(kid, item, done){
     img: item.img, bg: "#F0EEFF"
   });
 }
-/* 큰 일러스트 카드 한 장 (아침·하원·공부가 같은 모양을 씁니다) */
+/* 큰 일러스트 카드 한 장 (아침·하교/하원·공부가 같은 모양을 씁니다) */
 function bigCardHTML(o){
   const title = esc(o.title), hint = esc(o.hint || "");
   return `<button class="rcard${o.done ? " done" : ""}" ${o.attr}="${esc(o.key)}" aria-pressed="${!!o.done}" aria-label="${title} ${hint} · ${o.done ? "완료됨" : "눌러서 완료"}">
@@ -1782,7 +1950,7 @@ function childViewHTML(kid){
       </div>
       <div class="stats">
         <span class="stat">아침 <b id="rnum-${kid}">0/4</b></span>
-        <span class="stat">하원 <b id="anum-${kid}">0/3</b></span>
+        <span class="stat">${afterWord(kid)} <b id="anum-${kid}">0/3</b></span>
         <span class="stat">공부 <b id="snum-${kid}">0/0</b></span>
         <span class="stat">달성 <b id="rpct-${kid}">0%</b></span>
         <span class="stat balls">몬스터볼 <b id="balls-${kid}">0</b>개</span>
@@ -1815,7 +1983,7 @@ function childViewHTML(kid){
   <div class="routine-grid" id="routine-${kid}">${cards}</div>
 
   <div class="sec-head">
-    <h3>🏠 하원 루틴 <span class="hint" style="font-weight:700">집에 오면 스스로 척척</span></h3>
+    <h3>🏠 ${afterWord(kid)} 루틴 <span class="hint" style="font-weight:700">${kid === "naye" ? "학교에서 오면 스스로 척척" : "집에 오면 스스로 척척"}</span></h3>
     <div class="sec-prog"><span class="hint" id="alabel-${kid}">0 / 3 완료</span><div class="dots" id="adots-${kid}">${AFTER_STEPS.map(()=>'<span class="dot"></span>').join("")}</div></div>
   </div>
   <div class="routine-grid g3" id="after-${kid}">${afterCards}</div>
@@ -1901,7 +2069,7 @@ function renderDash(){
         <div class="kbar"><i style="width:${p.pct}%"></i></div>
         <div class="kstat">
           <span class="kg">아침 <b>${p.morning.done}/${p.morning.total}</b></span>
-          <span class="kg aft">하원 <b>${p.after.done}/${p.after.total}</b></span>
+          <span class="kg aft">${afterWord(kid)} <b>${p.after.done}/${p.after.total}</b></span>
           <span class="kg">공부 <b>${p.study.done}/${p.study.total}</b></span>
           <span class="right"><b>${p.pct}%</b> · ⚪ ${state.balls[kid] || 0}</span>
         </div>
@@ -1943,7 +2111,7 @@ function updateKidStats(kid){
   setText("#snum-" + kid, p.study.done + "/" + p.study.total);
   setText("#rpct-" + kid, p.pct + "%");
   setText("#rlabel-" + kid, `아침 ${p.morning.done} / ${p.morning.total} 완료`);
-  setText("#alabel-" + kid, `하원 ${p.after.done} / ${p.after.total} 완료`);
+  setText("#alabel-" + kid, `${afterWord(kid)} ${p.after.done} / ${p.after.total} 완료`);
   setText("#balls-" + kid, state.balls[kid] || 0);
   const dots = $("#dots-" + kid);
   if(dots) $$(".dot", dots).forEach((d,i)=>d.classList.toggle("on", !!rec.routines[kid][i]));
@@ -1970,7 +2138,7 @@ function syncStudyUI(kid){
   });
   setText("#kidstudy-count-" + kid, kidStudyCountText(kid));
 }
-/* 하원 루틴 카드 상태 맞추기 */
+/* 하교·하원 루틴 카드 상태 맞추기 */
 function syncAfterUI(kid){
   const rec = dayRecord().after[kid];
   $$(`[data-after^="${kid}:"]`).forEach(el=>{
@@ -2114,7 +2282,7 @@ function toggleAfter(kid, idx, btn){
   renderDash();
   updateDexButtons();
   const a = afterAll(kid);
-  if(!was && a.done === a.total) setTimeout(()=>{ sfx.cheer(); toast(`${kidCfg(kid).name}, 하원 루틴 완료! 스스로 척척 멋저요 🏠`); }, 360);
+  if(!was && a.done === a.total) setTimeout(()=>{ sfx.cheer(); toast(`${kidCfg(kid).name}, ${afterWord(kid)} 루틴 완료! 스스로 척척 멋져요 🏠`); }, 360);
 }
 
 function toggleStudy(kid, itemId, btn){
@@ -2259,7 +2427,7 @@ function openBall(kid){
     $("#ballStage").innerHTML = `
       <div style="font-size:46px; line-height:1">⚪</div>
       <h3>${name}의 몬스터볼이 없어요</h3>
-      <p class="ddesc">아침·하원 루틴이나 공부를 하나 완료하면<br>몬스터볼을 1개 받아요!</p>
+      <p class="ddesc">아침·${afterWord(kid)} 루틴이나 공부를 하나 완료하면<br>몬스터볼을 1개 받아요!</p>
       <div class="acts"><button class="btn ghost" data-close="ballOverlay">알겠어요</button></div>`;
     openOverlay("ballOverlay");
     return;
