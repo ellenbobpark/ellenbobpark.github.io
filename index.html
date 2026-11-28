@@ -644,6 +644,153 @@
     .ksum .kstat .right{font-size:10.5px}
   }
 
+  /* =========================================================
+     v4 · 월별 리포트 (📊 리포트 탭)
+     ========================================================= */
+  .rep-head{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin:2px 0 14px}
+  .rep-month{display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:18px;
+    background:var(--glass-2); border:1px solid var(--glass-line); box-shadow:var(--glass-shadow);
+    -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px)}
+  .rep-nav{width:36px; height:36px; border-radius:12px; display:grid; place-items:center; font-size:13px; font-weight:900;
+    color:#5C6B8A; background:rgba(255,255,255,.72); border:1px solid rgba(255,255,255,.95);
+    transition:transform .12s, background .15s}
+  .rep-nav:hover{background:#fff}
+  .rep-nav:active{transform:scale(.93)}
+  .rep-month-txt{min-width:146px; text-align:center; line-height:1.2}
+  .rep-month-txt b{display:block; font-size:18px; font-weight:900; color:#35415C; letter-spacing:-0.03em}
+  .rep-month-txt span{display:block; font-size:11.5px; font-weight:800; color:var(--muted); margin-top:2px}
+  .rep-today{font-size:12px; font-weight:900; color:#5C6B8A; background:rgba(255,255,255,.72);
+    border:1px solid rgba(255,255,255,.95); border-radius:12px; padding:9px 12px; white-space:nowrap; transition:background .15s}
+  .rep-today:hover{background:#fff}
+  .rep-filter{display:flex; gap:3px; padding:4px; border-radius:999px; background:rgba(255,255,255,.55);
+    border:1px solid rgba(255,255,255,.9); box-shadow:0 4px 14px rgba(118,140,196,.1)}
+  .rep-f{padding:7px 13px; border-radius:999px; font-size:12.5px; font-weight:800; color:#657491; white-space:nowrap; transition:.15s}
+  .rep-f:hover{background:rgba(255,255,255,.7)}
+  .rep-f.on{background:rgba(255,240,199,.95); color:#8A6410; box-shadow:0 2px 8px rgba(200,164,50,.16)}
+  .rep-f[data-rep-filter="daye"].on{background:rgba(238,229,255,.95); color:#6C4BB0; box-shadow:0 2px 8px rgba(140,110,200,.16)}
+
+  .rep-empty-note{margin-bottom:14px; padding:13px 16px; border-radius:16px; font-size:13px; font-weight:800;
+    color:#7A89A6; background:rgba(255,255,255,.5); border:1px dashed rgba(255,255,255,.95)}
+
+  .rep-sum{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .rep-kid{padding:16px 18px 15px; border-radius:24px; border:1px solid var(--glass-line); box-shadow:var(--glass-shadow);
+    -webkit-backdrop-filter:blur(16px) saturate(1.15); backdrop-filter:blur(16px) saturate(1.15);
+    background:linear-gradient(150deg,rgba(255,250,232,.8),rgba(255,255,255,.58))}
+  .rep-kid[data-kid="daye"]{background:linear-gradient(150deg,rgba(248,240,255,.8),rgba(255,255,255,.58))}
+  .rep-kid-top{display:flex; align-items:center; gap:10px}
+  .rep-kid-top .ava{width:42px; height:42px; border-radius:50%; flex:0 0 auto; display:grid; place-items:center; background:rgba(255,255,255,.82)}
+  .rep-kid-top .ava svg{width:34px; height:34px}
+  .rep-kid-top .nm b{display:block; font-size:16px; font-weight:900; color:#35415C}
+  .rep-kid-top .nm span{display:block; font-size:11.5px; font-weight:800; color:var(--muted); margin-top:1px}
+  .rep-kid-pct{margin-left:auto; text-align:right}
+  .rep-kid-pct b{font-size:23px; font-weight:900; color:var(--green-d); letter-spacing:-0.04em; line-height:1}
+  .rep-kid-pct span{display:block; font-size:10.5px; font-weight:800; color:var(--muted); margin-top:3px}
+  .rep-totalbar{height:10px; border-radius:999px; background:rgba(255,255,255,.75); overflow:hidden;
+    box-shadow:inset 0 1px 3px rgba(90,110,160,.13); margin-top:12px}
+  .rep-totalbar i{display:block; height:100%; border-radius:999px; background:repeating-linear-gradient(115deg,#A2E8A1 0 8px,#72D67A 8px 16px)}
+  .rep-rows{margin-top:12px; display:flex; flex-direction:column; gap:9px}
+  .rep-row{display:grid; grid-template-columns:1fr auto; column-gap:8px; row-gap:3px; align-items:center}
+  .rep-row .lbl{font-size:12.5px; font-weight:800; color:#4A5876}
+  .rep-row .lbl em{font-style:normal; font-size:10.5px; font-weight:800; color:#9AA7BF; margin-left:2px}
+  .rep-row .pctv{font-size:13.5px; font-weight:900; color:#3E7C4B}
+  .rep-row .numv{grid-column:1 / -1; font-size:10.5px; font-weight:800; color:#94A1B8; margin-top:-2px}
+  .rep-row .mb{grid-column:1 / -1; height:7px; border-radius:999px; background:rgba(255,255,255,.8); overflow:hidden;
+    box-shadow:inset 0 1px 2px rgba(90,110,160,.1)}
+  .rep-row .mb i{display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#9AE59A,#5FC96D)}
+  .rep-chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px}
+  .rep-chips span{font-size:11px; font-weight:800; color:#5C6B8A; background:rgba(255,255,255,.74);
+    border:1px solid rgba(255,255,255,.95); border-radius:999px; padding:4px 9px}
+  .rep-chips span b{color:#35415C; font-weight:900}
+
+  .rep-cal-panel{margin-top:16px; padding:18px 18px 16px}
+  .rep-cal-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:12px}
+  .rep-cal-top h3{font-size:16px; font-weight:900; color:#35415C}
+  .rep-cal-top .hint{font-size:11.5px; color:var(--muted); font-weight:800}
+  .rep-cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px}
+  .rep-wd{text-align:center; font-size:11px; font-weight:900; color:#93A0B8; padding-bottom:2px}
+  .rep-wd.sun{color:#D98A8A}
+  .rep-wd.sat{color:#8FA6D8}
+  .rep-day{position:relative; min-height:58px; border-radius:14px; padding:5px 5px 4px; text-align:left;
+    display:flex; flex-direction:column; justify-content:space-between; gap:3px;
+    background:var(--fill,rgba(255,255,255,.4)); border:1px solid rgba(255,255,255,.85);
+    transition:transform .12s, box-shadow .16s}
+  .rep-day.blank{background:transparent; border-color:transparent; pointer-events:none}
+  .rep-day .dnum{font-size:12px; font-weight:900; color:#57648A; line-height:1}
+  .rep-day.sun .dnum{color:#D27B7B}
+  .rep-day.sat .dnum{color:#8098CC}
+  .rep-day.future .dnum{color:#B7C1D4}
+  .rep-day.today{box-shadow:inset 0 0 0 2px #F0C24A, 0 4px 12px rgba(200,164,50,.18)}
+  .rep-day.sel{box-shadow:inset 0 0 0 3px #6ECD7A, 0 8px 18px rgba(70,150,90,.22); transform:translateY(-1px)}
+  .rep-day:not(.blank):hover{transform:translateY(-1px); box-shadow:0 8px 18px rgba(118,140,196,.2)}
+  .rep-day .dstar{position:absolute; right:3px; top:2px; width:15px; height:15px; border-radius:50%; background:rgba(255,255,255,.94);
+    color:#E0A61A; font-size:9px; line-height:1; display:grid; place-items:center; box-shadow:0 1px 3px rgba(160,120,20,.22)}
+  .rep-day .dbars{display:flex; flex-direction:column; gap:2px}
+  .rep-day .db{height:4px; border-radius:999px; background:rgba(120,140,190,.14); overflow:hidden}
+  .rep-day .db i{display:block; height:100%; border-radius:999px; background:#F2BE3C; transition:width .4s}
+  .rep-day .db.daye i{background:#E68FA9}
+  .rep-day.filtered .db{height:6px}
+  .rep-day.filtered .db i{background:#6ECD7A}
+  .rep-day.filtered[data-filter="naye"] .db i{background:#F2BE3C}
+  .rep-day.filtered[data-filter="daye"] .db i{background:#E68FA9}
+  .rep-legend{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:12px; font-size:11px; font-weight:800; color:#8E9BB2}
+  .rep-legend .lg{display:inline-flex; align-items:center; gap:5px}
+  .rep-legend .sw{width:13px; height:13px; border-radius:4px; display:inline-block; border:1px solid rgba(255,255,255,.9)}
+
+  .rep-detail{margin-top:16px; padding:18px 20px 20px}
+  .rep-d-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px}
+  .rep-d-head b{font-size:16px; font-weight:900; color:#35415C}
+  .rep-d-head .sum{font-size:12px; font-weight:800; color:var(--muted)}
+  .rep-d-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .rep-d-kid{background:rgba(255,255,255,.52); border:1px solid rgba(255,255,255,.92); border-radius:18px; padding:13px 14px}
+  .rep-d-kid .tk{display:flex; align-items:center; gap:7px; font-size:14px; font-weight:900; color:#35415C; margin-bottom:4px}
+  .rep-d-kid .tk .p{margin-left:auto; font-size:12.5px; font-weight:900; color:var(--green-d)}
+  .rep-glabel{display:block; font-size:11px; font-weight:900; color:#8E9BB2; margin-top:9px; margin-bottom:5px}
+  .rep-grp{display:flex; flex-wrap:wrap; gap:5px}
+  .rep-tick{display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:800; color:#A3AFC4;
+    background:rgba(255,255,255,.8); border:1px solid rgba(255,255,255,.92); border-radius:999px; padding:4px 9px}
+  .rep-tick.on{background:rgba(232,249,230,.94); color:#3E7C4B; border-color:rgba(160,225,170,.85)}
+  .rep-tick .box{width:13px; height:13px; border-radius:4px; background:rgba(120,140,190,.16); display:grid; place-items:center; font-size:9px; color:#fff; flex:0 0 auto}
+  .rep-tick.on .box{background:var(--green)}
+  .rep-empty-d{padding:6px 2px 2px; font-size:13px; font-weight:800; color:#8E9BB2}
+
+  .rep-stats{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px; align-items:start}
+  .rep-stat-panel{padding:18px}
+  .rep-stat-head{display:flex; align-items:center; gap:10px; margin-bottom:6px}
+  .rep-stat-head .ava{width:40px; height:40px; border-radius:50%; flex:0 0 auto; display:grid; place-items:center; background:rgba(255,255,255,.82)}
+  .rep-stat-head .ava svg{width:32px; height:32px}
+  .rep-stat-head h3{font-size:15.5px; font-weight:900; color:#35415C}
+  .rep-stat-head span{font-size:11.5px; font-weight:800; color:var(--muted)}
+  .rep-stat{margin-top:7px}
+  .rep-stat .sr-top{display:flex; align-items:baseline; gap:8px; font-size:12px; font-weight:800; color:#4A5876}
+  .rep-stat .sr-top b{margin-left:auto; font-size:12.5px; font-weight:900; color:#35415C}
+  .rep-stat .sr-top em{font-style:normal; font-size:11px; font-weight:800; color:#9AA7BF; width:32px; text-align:right}
+  .rep-stat .sr-bar{height:8px; border-radius:999px; background:rgba(255,255,255,.8); overflow:hidden; margin-top:4px;
+    box-shadow:inset 0 1px 2px rgba(90,110,160,.1)}
+  .rep-stat .sr-bar i{display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#9AE59A,#5FC96D); transition:width .5s}
+  .rep-stat.aft .sr-bar i{background:linear-gradient(90deg,#FFE1A3,#F2B94B)}
+  .rep-stat.st .sr-bar i{background:linear-gradient(90deg,#D3C8FF,#9C86E8)}
+
+  @media (max-width:900px){
+    .rep-sum,.rep-stats,.rep-d-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:560px){
+    .rep-head{gap:8px}
+    .rep-month-txt{min-width:112px}
+    .rep-month-txt b{font-size:16px}
+    .rep-today{padding:8px 10px}
+    .rep-filter{order:3; width:100%; justify-content:space-between}
+    .rep-f{flex:1 1 auto; text-align:center}
+    .rep-cal-panel{padding:14px 11px}
+    .rep-cal-grid{gap:4px}
+    .rep-day{min-height:50px; border-radius:11px; padding:4px 4px 3px}
+    .rep-day .dnum{font-size:11px}
+    .rep-day .db{height:3px}
+    .rep-day.filtered .db{height:5px}
+    .rep-day .dstar{width:13px; height:13px; font-size:8px; right:2px; top:2px}
+    .rep-d-kid{padding:11px 12px}
+    .rep-kid{padding:14px 15px}
+  }
+
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important}
   }
@@ -672,6 +819,7 @@
     <button class="tab child-b" data-view="daye" role="tab" aria-selected="false"><span class="t">👧</span>다예 <span class="nt" data-tabtime="daye">07:30</span></button>
     <button class="tab" data-view="study" role="tab" aria-selected="false"><span class="t">📖</span>공부</button>
     <button class="tab" data-view="dex" role="tab" aria-selected="false"><span class="t">🏆</span>포켓몬 도감</button>
+    <button class="tab" data-view="report" role="tab" aria-selected="false"><span class="t">📊</span>리포트</button>
   </nav>
 
   <div class="tools">
@@ -758,6 +906,9 @@
     <div class="dex-grid" id="dexGrid"></div>
     <p class="dex-empty" id="dexEmpty">아직 텅 비어 있어요. 몬스터볼을 열어 첫 포켓몬을 만나 보세요!</p>
   </section>
+
+  <!-- ===== 월별 리포트 ===== -->
+  <section class="view" id="view-report" aria-label="월별 리포트"></section>
 </main>
 
 <!-- ===== 설정 ===== -->
@@ -1698,9 +1849,11 @@ const Store = (()=>{
     };
   }
   function prune(data){
+    /* 월별 리포트를 13개월 넘게 볼 수 있도록 최근 400일치를 남깁니다.
+       (기존 저장값은 지우지 않고, 400일을 넘은 오래된 날짜만 정리합니다) */
     const days = data.days || {};
     const keys = Object.keys(days).sort();
-    if(keys.length > 45) keys.slice(0, keys.length - 45).forEach(k=>delete days[k]);
+    if(keys.length > 400) keys.slice(0, keys.length - 400).forEach(k=>delete days[k]);
     return data;
   }
   return {
@@ -2307,6 +2460,293 @@ function toggleStudy(kid, itemId, btn){
   if(!was && s.total && s.done === s.total) setTimeout(()=>{ sfx.cheer(); toast(`${kidCfg(kid).name}, 오늘 공부를 모두 끝냈어요! 🏆`); }, 350);
 }
 
+/* =========================================================
+   v4 · 월별 리포트
+   ========================================================= */
+const REPORT_FILTER_LABEL = { all:"👨‍👩‍👧‍👦 함께", naye:"👧 나예", daye:"👧 다예" };
+const REPORT_COLOR = { all:[110,205,122], naye:[242,190,60], daye:[230,143,169] };
+let reportMonth = (()=>{ const n = new Date(); return { y:n.getFullYear(), m:n.getMonth() }; })();
+let reportSel = null;        /* "YYYY-MM-DD" · null이면 이번 달/마지막 기록일을 자동으로 */
+let reportFilter = "all";    /* "all" | "naye" | "daye" */
+let reportData = null;
+
+function repPrefix(y, m){ return y + "-" + pad2(m + 1) + "-"; }
+function repLevel(pct){
+  if(pct <= 0) return 0;
+  if(pct >= 100) return 5;
+  if(pct >= 75) return 4;
+  if(pct >= 50) return 3;
+  if(pct >= 25) return 2;
+  return 1;
+}
+function repShiftMonth(delta){
+  if(delta === 0){
+    const n = new Date();
+    reportMonth = { y:n.getFullYear(), m:n.getMonth() };
+  }else{
+    const d = new Date(reportMonth.y, reportMonth.m + delta, 1);
+    reportMonth = { y:d.getFullYear(), m:d.getMonth() };
+  }
+  reportSel = null;
+  renderReport();
+  sfx.click();
+}
+
+/* 이 달 기록을 한 번에 모음 (아이별 · 날짜별 · 항목별) */
+function repCollect(){
+  const y = reportMonth.y, m = reportMonth.m;
+  const nDays = new Date(y, m + 1, 0).getDate();
+  const prefix = repPrefix(y, m);
+  const items = {}, kids = {}, byDate = {};
+  let activeDays = 0, fullDays = 0;
+  KID_IDS.forEach(k=>{
+    items[k] = (state.settings[k] && Array.isArray(state.settings[k].study)) ? state.settings[k].study : [];
+    kids[k] = {
+      id:k, activeDays:0, fullDays:0, done:0, total:0, studyTotal: items[k].length,
+      morning:{ done:0, days:0, full:0 },
+      after:{ done:0, days:0, full:0 },
+      study:{ done:0, days:0, full:0 },
+      stepCounts:[0,0,0,0], afterCounts:[0,0,0], itemCounts:{}
+    };
+  });
+  for(let d = 1; d <= nDays; d++){
+    const dk = prefix + pad2(d);
+    const raw = state.days[dk];
+    const rec = raw ? normalizeDay(raw) : null;
+    const entry = { dk, d, weekday: new Date(y, m, d).getDay(), rec, kids:{}, done:0, total:0, fPct:0 };
+    KID_IDS.forEach(k=>{
+      const K = kids[k];
+      const mDone = rec ? rec.routines[k].filter(Boolean).length : 0;
+      const aDone = rec ? rec.after[k].filter(Boolean).length : 0;
+      const sDone = rec ? items[k].filter(it=>rec.study[k][it.id]).length : 0;
+      const total = ROUTINE_STEPS[k].length + AFTER_STEPS.length + items[k].length;
+      const p = {
+        morning:{ done:mDone, total:4, pct: Math.round(mDone / 4 * 100) },
+        after:{ done:aDone, total:AFTER_STEPS.length, pct: Math.round(aDone / AFTER_STEPS.length * 100) },
+        study:{ done:sDone, total:items[k].length, pct: items[k].length ? Math.round(sDone / items[k].length * 100) : 0 },
+        done: mDone + aDone + sDone, total,
+        pct: total ? Math.round((mDone + aDone + sDone) / total * 100) : 0
+      };
+      entry.kids[k] = p;
+      entry.done += p.done; entry.total += total;
+      if(p.pct > 0){
+        K.activeDays++; K.done += p.done; K.total += total;
+        if(p.pct >= 100) K.fullDays++;
+      }
+      if(mDone){ K.morning.done += mDone; K.morning.days++; }
+      if(mDone === 4) K.morning.full++;
+      if(aDone){ K.after.done += aDone; K.after.days++; }
+      if(aDone === AFTER_STEPS.length) K.after.full++;
+      if(sDone){ K.study.done += sDone; K.study.days++; }
+      if(items[k].length && sDone === items[k].length) K.study.full++;
+      if(rec){
+        for(let i = 0; i < 4; i++) if(rec.routines[k][i]) K.stepCounts[i]++;
+        for(let i = 0; i < AFTER_STEPS.length; i++) if(rec.after[k][i]) K.afterCounts[i]++;
+        items[k].forEach(it=>{ if(rec.study[k][it.id]) K.itemCounts[it.id] = (K.itemCounts[it.id] || 0) + 1; });
+      }
+    });
+    entry.fPct = entry.total ? Math.round(entry.done / entry.total * 100) : 0;
+    if(entry.kids.naye.pct > 0 || entry.kids.daye.pct > 0) activeDays++;
+    if(entry.kids.naye.pct >= 100 && entry.kids.daye.pct >= 100) fullDays++;
+    byDate[dk] = entry;
+  }
+  return { y, m, nDays, prefix, items, kids, byDate, activeDays, fullDays };
+}
+
+function repKidCard(K){
+  const cfg = KIDS[K.id];
+  const overall = K.total ? Math.round(K.done / K.total * 100) : 0;
+  const secs = [
+    { icon:"☀️", name:"아침 루틴", steps:4, s:K.morning },
+    { icon: K.id === "naye" ? "🏫" : "🏠", name: afterWord(K.id) + " 루틴", steps:AFTER_STEPS.length, s:K.after },
+    { icon:"📖", name:"공부", steps: K.studyTotal, s:K.study }
+  ];
+  const rows = secs.map(s=>{
+    const base = (K.activeDays && s.steps) ? s.steps * K.activeDays : 0;
+    const pct = base ? Math.round(s.s.done / base * 100) : 0;
+    return `<div class="rep-row">
+      <span class="lbl">${s.icon} ${s.name} <em>${s.steps}단계</em></span>
+      <span class="pctv">${pct}%</span>
+      <span class="numv">${s.s.done}회 완료 · ${s.s.days}일</span>
+      <span class="mb"><i style="width:${clamp(pct, 0, 100)}%"></i></span>
+    </div>`;
+  }).join("");
+  return `<div class="rep-kid" data-kid="${K.id}">
+    <div class="rep-kid-top">
+      <span class="ava">${partnerMiniSVG(K.id)}</span>
+      <div class="nm"><b>${cfg.name}</b><span>${cfg.grade}</span></div>
+      <div class="rep-kid-pct"><b>${overall}%</b><span>이번 달 달성</span></div>
+    </div>
+    <div class="rep-totalbar"><i style="width:${clamp(overall, 0, 100)}%"></i></div>
+    <div class="rep-rows">${rows}</div>
+    <div class="rep-chips">
+      <span>기록 <b>${K.activeDays}일</b></span>
+      <span>모두 끝낸 날 <b>${K.fullDays}일</b></span>
+      <span>완료 <b>${K.done}회</b></span>
+    </div>
+  </div>`;
+}
+
+function repCalendarHTML(R){
+  let html = `<div class="rep-cal-grid" role="group" aria-label="요일">` + WEEK.map((w, i)=>
+    `<div class="rep-wd${i === 0 ? " sun" : i === 6 ? " sat" : ""}">${w}</div>`).join("") + `</div>`;
+  html += `<div class="rep-cal-grid" style="margin-top:6px" role="group" aria-label="${R.y}년 ${R.m+1}월 달력">`;
+  const first = new Date(R.y, R.m, 1).getDay();
+  for(let i = 0; i < first; i++) html += `<div class="rep-day blank" aria-hidden="true"></div>`;
+  const today = dateKey();
+  const focus = reportFilter === "all" ? null : reportFilter;
+  const base = REPORT_COLOR[reportFilter] || REPORT_COLOR.all;
+  for(let d = 1; d <= R.nDays; d++){
+    const dk = R.prefix + pad2(d);
+    const e = R.byDate[dk];
+    const wd = e.weekday;
+    const n = e.kids.naye, a = e.kids.daye;
+    const pct = focus ? e.kids[focus].pct : e.fPct;
+    const lv = repLevel(pct);
+    const alpha = [0, .13, .26, .42, .6, .82][lv];
+    const bg = lv ? `rgba(${base[0]},${base[1]},${base[2]},${alpha})` : "rgba(255,255,255,.34)";
+    const bars = focus
+      ? `<span class="db"><i style="width:${clamp(pct, 0, 100)}%"></i></span>`
+      : `<span class="db"><i style="width:${clamp(n.pct, 0, 100)}%"></i></span><span class="db daye"><i style="width:${clamp(a.pct, 0, 100)}%"></i></span>`;
+    const star = (n.pct >= 100 && a.pct >= 100) ? `<span class="dstar" aria-hidden="true">★</span>` : "";
+    const label = `${R.m+1}월 ${d}일 ${WEEK[wd]}요일 · 나예 ${n.pct}% · 다예 ${a.pct}%`;
+    const cls = ["rep-day", wd === 0 ? "sun" : wd === 6 ? "sat" : "", dk === today ? "today" : "",
+      dk === reportSel ? "sel" : "", dk > today ? "future" : "", focus ? "filtered" : ""].filter(Boolean).join(" ");
+    html += `<button class="${cls}" data-rep-day="${dk}"${focus ? ` data-filter="${focus}"` : ""} style="--fill:${bg}" aria-pressed="${dk === reportSel}" aria-label="${label}" title="${label}">
+      <span class="dnum">${d}</span>${star}<span class="dbars">${bars}</span>
+    </button>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function repLegendHTML(){
+  const base = REPORT_COLOR[reportFilter] || REPORT_COLOR.all;
+  const sw = lv => {
+    const a = [0, .13, .26, .42, .6, .82][lv];
+    return `<span class="sw" style="background:rgba(${base[0]},${base[1]},${base[2]},${a})"></span>`;
+  };
+  const who = reportFilter === "all"
+    ? `<span class="lg"><span class="sw" style="background:#F2BE3C"></span>나예</span>` +
+      `<span class="lg"><span class="sw" style="background:#E68FA9"></span>다예</span>`
+    : `<span class="lg"><span class="sw" style="background:#6ECD7A"></span>${reportFilter === "naye" ? "나예" : "다예"} 달성률</span>`;
+  return `<div class="rep-legend">
+    <span class="lg"><span class="sw" style="background:rgba(255,255,255,.34)"></span>기록 없음</span>
+    ${who}
+    <span class="lg">${sw(1)}${sw(2)}${sw(3)}${sw(4)}${sw(5)}<span>달성률 높을수록 진해져요</span></span>
+    <span class="lg">★ 둘 다 모두 완료</span>
+  </div>`;
+}
+
+function repTick(on, label){
+  return `<span class="rep-tick${on ? " on" : ""}"><span class="box">${on ? "✓" : ""}</span>${esc(label)}</span>`;
+}
+function repDetailHTML(R, dk){
+  if(!dk) return `<div class="rep-d-head"><b>날짜를 하나 눌러 주세요</b></div>`;
+  const e = R.byDate[dk];
+  if(!e) return `<div class="rep-d-head"><b>${R.m+1}월 기록</b></div><div class="rep-empty-d">이 달에는 아직 기록이 없어요.</div>`;
+  const head = `<div class="rep-d-head">
+    <b>📅 ${e.d}일 (${WEEK[e.weekday]})</b>
+    <span class="sum">나예 ${e.kids.naye.pct}% · 다예 ${e.kids.daye.pct}%</span>
+  </div>`;
+  if(e.kids.naye.pct === 0 && e.kids.daye.pct === 0){
+    return head + `<div class="rep-empty-d">🌙 이 날은 아직 기록이 없어요.</div>`;
+  }
+  const grid = KID_IDS.map(k=>{
+    const p = e.kids[k];
+    const rec = e.rec;
+    const studyItems = R.items[k].length
+      ? R.items[k].map(it=>repTick(!!(rec && rec.study[k][it.id]), it.label)).join("")
+      : `<span class="rep-empty-d">등록된 공부 항목이 없어요</span>`;
+    return `<div class="rep-d-kid">
+      <div class="tk">${KIDS[k].name} <span class="p">${p.pct}%</span></div>
+      <span class="rep-glabel">☀️ 아침 루틴 ${p.morning.done}/${p.morning.total}</span>
+      <div class="rep-grp">${ROUTINE_STEPS[k].map((t, i)=>repTick(!!(rec && rec.routines[k][i]), t)).join("")}</div>
+      <span class="rep-glabel">${k === "naye" ? "🏫" : "🏠"} ${afterWord(k)} 루틴 ${p.after.done}/${p.after.total}</span>
+      <div class="rep-grp">${AFTER_STEPS.map((t, i)=>repTick(!!(rec && rec.after[k][i]), t)).join("")}</div>
+      <span class="rep-glabel">📖 공부 ${p.study.done}/${p.study.total}</span>
+      <div class="rep-grp">${studyItems}</div>
+    </div>`;
+  }).join("");
+  return head + `<div class="rep-d-grid">${grid}</div>`;
+}
+
+function repStatPanel(R, k){
+  const K = R.kids[k];
+  const denom = K.activeDays;
+  const stat = (label, count, cls)=>{
+    const pct = denom ? Math.round(count / denom * 100) : 0;
+    return `<div class="rep-stat ${cls}">
+      <div class="sr-top"><span>${esc(label)}</span><b>${count}회</b><em>${denom ? pct + "%" : "-"}</em></div>
+      <div class="sr-bar"><i style="width:${clamp(pct, 0, 100)}%"></i></div>
+    </div>`;
+  };
+  return `<div class="panel rep-stat-panel">
+    <div class="rep-stat-head">
+      <span class="ava">${partnerMiniSVG(k)}</span>
+      <div><h3>${KIDS[k].name} 항목별 통계</h3><span>${R.m+1}월 · 기록 ${K.activeDays}일 기준</span></div>
+    </div>
+    <span class="rep-glabel">☀️ 아침 루틴</span>
+    ${ROUTINE_STEPS[k].map((t, i)=>stat(t, K.stepCounts[i], "")).join("")}
+    <span class="rep-glabel">${k === "naye" ? "🏫" : "🏠"} ${afterWord(k)} 루틴</span>
+    ${AFTER_STEPS.map((t, i)=>stat(t, K.afterCounts[i], "aft")).join("")}
+    <span class="rep-glabel">📖 공부</span>
+    ${R.items[k].map(it=>stat(it.label, K.itemCounts[it.id] || 0, "st")).join("")}
+  </div>`;
+}
+
+function selectReportDay(dk){
+  reportSel = dk;
+  sfx.click();
+  $$("#view-report [data-rep-day]").forEach(b=>{
+    const on = b.dataset.repDay === dk;
+    b.classList.toggle("sel", on);
+    b.setAttribute("aria-pressed", String(on));
+  });
+  const box = $("#repDetail");
+  if(box && reportData) box.innerHTML = repDetailHTML(reportData, dk);
+}
+
+function renderReport(){
+  const el = $("#view-report");
+  if(!el) return;
+  const R = repCollect();
+  reportData = R;
+  let sel = (reportSel && reportSel.indexOf(R.prefix) === 0) ? reportSel : null;
+  if(!sel){
+    const today = dateKey();
+    if(today.indexOf(R.prefix) === 0) sel = today;
+    else{
+      for(let d = R.nDays; d >= 1; d--){
+        const dk = R.prefix + pad2(d), e = R.byDate[dk];
+        if(e && (e.kids.naye.pct > 0 || e.kids.daye.pct > 0)){ sel = dk; break; }
+      }
+    }
+  }
+  reportSel = sel;
+  el.innerHTML = `
+    <div class="rep-head">
+      <div class="rep-month">
+        <button class="rep-nav" data-rep-nav="-1" aria-label="이전 달">◀</button>
+        <div class="rep-month-txt"><b>${R.y}년 ${R.m+1}월</b><span>기록 ${R.activeDays}일 · 모두 끝낸 날 ${R.fullDays}일</span></div>
+        <button class="rep-nav" data-rep-nav="1" aria-label="다음 달">▶</button>
+      </div>
+      <button class="rep-today" data-rep-nav="0">이번 달</button>
+      <div class="rep-filter" role="group" aria-label="달력에 표시할 아이">
+        ${["all", "naye", "daye"].map(f=>`<button class="rep-f${reportFilter === f ? " on" : ""}" data-rep-filter="${f}" aria-pressed="${reportFilter === f}">${REPORT_FILTER_LABEL[f]}</button>`).join("")}
+      </div>
+    </div>
+    ${R.activeDays ? "" : `<div class="rep-empty-note">🌙 이 달에는 아직 기록이 없어요. 루틴을 하나 체크하면 여기에 차곡차곡 쌓여요.</div>`}
+    <div class="rep-sum">${KID_IDS.map(k=>repKidCard(R.kids[k])).join("")}</div>
+    <div class="panel rep-cal-panel">
+      <div class="rep-cal-top"><h3>📅 ${R.m+1}월 한눈에</h3><span class="hint">날짜를 누르면 그날 내역이 아래에 나와요</span></div>
+      ${repCalendarHTML(R)}
+      ${repLegendHTML()}
+    </div>
+    <div class="panel rep-detail" id="repDetail">${repDetailHTML(R, sel)}</div>
+    <div class="rep-stats">${KID_IDS.map(k=>repStatPanel(R, k)).join("")}</div>`;
+}
+
 /* ---------- 탭 ---------- */
 function go(view){
   if(!$("#view-" + view)) view = "dashboard";
@@ -2317,8 +2757,11 @@ function go(view){
     t.setAttribute("aria-selected", String(on));
   });
   $$(".view").forEach(v=>v.classList.toggle("on", v.id === "view-" + view));
+  const activeTab = $$(".tab").find(t=>t.dataset.view === view);
+  if(activeTab && activeTab.scrollIntoView){ try{ activeTab.scrollIntoView({block:"nearest", inline:"center"}); }catch(e){} }
   if(view === "dashboard"){ renderDash(); if(!weather.data) loadWeather(); }
   if(view === "dex") renderDex();
+  if(view === "report") renderReport();
   if(view === "study"){ KID_IDS.forEach(k=>updateStudyStats(k)); }
   if(view === "naye" || view === "daye") updateKidStats(view);
   tick();
@@ -2350,6 +2793,12 @@ document.addEventListener("click", e=>{
   if(cheer){ openCheer(cheer.dataset.cheer); return; }
   const goto = e.target.closest("[data-goto]");
   if(goto){ sfx.click(); go(goto.dataset.goto); return; }
+  const repNav = e.target.closest("[data-rep-nav]");
+  if(repNav){ repShiftMonth(Number(repNav.dataset.repNav)); return; }
+  const repF = e.target.closest("[data-rep-filter]");
+  if(repF){ reportFilter = repF.dataset.repFilter; renderReport(); sfx.click(); return; }
+  const repDay = e.target.closest("[data-rep-day]");
+  if(repDay && !repDay.classList.contains("blank")){ selectReportDay(repDay.dataset.repDay); return; }
   const dexEntry = e.target.closest("[data-dex]");
   if(dexEntry){ showDexEntry(dexEntry.dataset.dex); return; }
   const closeBtn = e.target.closest("[data-close]");
@@ -2803,6 +3252,7 @@ function renderAll(){
   updateTabTimes();
   KID_IDS.forEach(k=>{ updateKidStats(k); updateStudyStats(k); });
   updateDexButtons();
+  if(currentView === "report") renderReport();
   tick();
 }
 
